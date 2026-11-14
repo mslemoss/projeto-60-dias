@@ -8335,19 +8335,44 @@
             showToast(`Bem-vindo de volta, ${appState.userName}! Seus treinos e relatórios foram carregados!`, "success");
             return;
           } else {
-            // O USUÁRIO NÃO EXISTE NA PLANILHA AINDA! Libera uma única vez as etapas de Masculino/Feminino, Peso/Altura e Nível
+            // O USUÁRIO NÃO EXISTE NA PLANILHA (OU FOI RESETADO PELO ADMIN NA PLANILHA)!
+            // Limpa qualquer cache local antigo deste e-mail e abre as etapas de Masculino/Feminino, Peso/Altura e Nível do zero.
+            try { localStorage.removeItem(`BALESTRIN_60D_USER_${email}`); } catch (e) {}
             isNewUserSetupFlow = true;
-            appState.userName = userName;
-            appState.cloudAccountEmail = email;
-            appState.cloudAccountKey = vaultKey;
-            appState.gasWebAppUrl = gasUrl;
-            appState.onboardingDone = false;
-            appState.levelLocked = false;
+            appState = {
+              onboardingDone: false,
+              levelLocked: false,
+              gasWebAppUrl: gasUrl,
+              userName: userName,
+              cloudAccountEmail: email,
+              cloudAccountKey: vaultKey,
+              genderProfile: "Masculino",
+              userWeight: "",
+              userHeight: "",
+              userGoal: "Definição",
+              weightTimeline: [],
+              focusMode: false,
+              collapsedSlots: {},
+              activePlanId: "inic_01",
+              activeDayId: "d1",
+              planProgress: {},
+              soundEnabled: true,
+              substitutions: {},
+              customVideos: {},
+              activeSessionLogs: {},
+              exerciseHistory: {},
+              exerciseLoadHistory: {},
+              completedWorkouts: [],
+              workoutSessionStartTime: null,
+              reviewTodayAnyway: false,
+              updatedAtTimestamp: Date.now()
+            };
             saveState(true);
             closeCloudLoginModal();
-            document.getElementById("onboardingWizardModal").classList.remove("hidden");
-            goToWizardStep(1);
-            showToast(`Olá, ${userName}! Como é seu 1º acesso, configure seu treino inicial abaixo (aparecerá só esta vez).`, "success");
+            renderActiveWorkout();
+            renderHistoryTab();
+            openOnboardingWizard(1);
+            showToast(`Olá, ${userName}! Configure seu treino inicial abaixo (aparecerá só esta vez).`, "success");
             return;
           }
         } catch (err) {
@@ -8409,23 +8434,79 @@
       appState.gasWebAppUrl = gasUrl;
       updateCloudAuthUI(null, appState.cloudAccountEmail ? `Nuvem: ${appState.userName || appState.cloudAccountEmail.split("@")[0]} ✓` : "Aguardando Login");
 
-      // Se o usuário já estava logado neste aparelho, busca silenciosamente a versão mais recente na Planilha Google ao abrir o app!
+      // Se o usuário já estava logado neste aparelho, verifica na Planilha Google ao abrir o app:
+      // - Se o Admin apagou a linha dele (ou limpou a coluna L JSON_Estado_Completo), reseta o aparelho na hora e abre a escolha de Gênero/Medidas/Nível!
+      // - Se os dados existem na planilha, sincroniza a versão mais recente.
       if (gasUrl && appState.cloudAccountEmail && appState.cloudAccountKey && appState.onboardingDone) {
         try {
+          const savedEmail = appState.cloudAccountEmail;
+          const savedName = appState.userName || savedEmail.split("@")[0];
+          const savedKey = appState.cloudAccountKey;
           const resp = await fetch(gasUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({
               action: "login",
-              email: appState.cloudAccountEmail,
-              userName: appState.userName || "",
-              pinHash: appState.cloudAccountKey,
-              state: appState
+              email: savedEmail,
+              userName: savedName,
+              pinHash: savedKey,
+              state: {
+                onboardingDone: false,
+                levelLocked: false,
+                userName: savedName,
+                cloudAccountEmail: savedEmail,
+                cloudAccountKey: savedKey
+              }
             }),
             redirect: "follow"
           });
           const resJson = await resp.json();
-          if (resJson && resJson.ok && !resJson.isNewUser && resJson.state && resJson.state.onboardingDone) {
+          if (resJson && resJson.ok) {
+            const stillConfiguredInSheet =
+              !resJson.isNewUser &&
+              resJson.state &&
+              Boolean(resJson.state.onboardingDone && resJson.state.levelLocked);
+
+            if (!stillConfiguredInSheet) {
+              // O Admin apagou a linha do usuário na planilha (ou limpou o JSON na coluna L): força recadastro!
+              try { localStorage.removeItem(`BALESTRIN_60D_USER_${savedEmail}`); } catch (e) {}
+              isNewUserSetupFlow = true;
+              appState = {
+                onboardingDone: false,
+                levelLocked: false,
+                gasWebAppUrl: gasUrl,
+                userName: savedName,
+                cloudAccountEmail: savedEmail,
+                cloudAccountKey: savedKey,
+                genderProfile: "Masculino",
+                userWeight: "",
+                userHeight: "",
+                userGoal: "Definição",
+                weightTimeline: [],
+                focusMode: false,
+                collapsedSlots: {},
+                activePlanId: "inic_01",
+                activeDayId: "d1",
+                planProgress: {},
+                soundEnabled: true,
+                substitutions: {},
+                customVideos: {},
+                activeSessionLogs: {},
+                exerciseHistory: {},
+                exerciseLoadHistory: {},
+                completedWorkouts: [],
+                workoutSessionStartTime: null,
+                reviewTodayAnyway: false,
+                updatedAtTimestamp: Date.now()
+              };
+              saveState(true);
+              renderActiveWorkout();
+              renderHistoryTab();
+              openOnboardingWizard(1);
+              showToast("Seu perfil foi resetado pelo administrador. Preencha seus dados iniciais novamente!", "info");
+              return;
+            }
+
             const cloudTime = resJson.state.updatedAtTimestamp || 0;
             const localTime = appState.updatedAtTimestamp || 0;
             if (cloudTime >= localTime) {
@@ -8433,8 +8514,8 @@
               appState = {
                 ...appState,
                 ...resJson.state,
-                cloudAccountEmail: appState.cloudAccountEmail,
-                cloudAccountKey: appState.cloudAccountKey,
+                cloudAccountEmail: savedEmail,
+                cloudAccountKey: savedKey,
                 onboardingDone: true,
                 levelLocked: true
               };
