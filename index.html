@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Sistema de Treino - Projeto 60 Dias</title>
+  <!-- Configuração Nativa PWA (Android, Samsung Galaxy & iOS) -->
+  <meta name="theme-color" content="#0B0F17" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Projeto 60D" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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" />
+  <link rel="apple-touch-icon" sizes="192x192" href="data:image/png;base64,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" />
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & Chakra Petch para estética esportiva de alta performance -->
@@ -181,6 +190,12 @@
             <span id="cloudAuthText">Entrar Google</span>
           </button>
 
+          <!-- Botão Instalar Aplicativo PWA no Celular -->
+          <button onclick="openPwaInstallModal()" id="pwaInstallHeaderBtn" title="Instalar como Aplicativo no Celular" class="h-8 px-2.5 rounded-xl bg-neonGreen/15 border border-neonGreen/40 hover:border-neonGreen text-neonGreen text-[11px] font-bold flex items-center gap-1 transition">
+            <i class="ph-bold ph-device-mobile-speaker text-sm"></i>
+            <span class="hidden sm:inline">Instalar App</span>
+          </button>
+
           <!-- Botão Manter Tela Acesa (Wake Lock Mobile) -->
           <button onclick="toggleWakeLock()" id="wakeLockBtn" title="Manter tela do celular acesa durante o treino" class="h-8 px-2.5 rounded-xl bg-bgCard border border-borderSubtle text-slate-300 hover:text-white hover:border-neonGreen/50 transition flex items-center justify-center gap-1">
             <i id="wakeLockIcon" class="ph-fill ph-sun-dim text-base text-slate-400"></i>
@@ -335,10 +350,7 @@
               <i class="ph-bold ph-cloud-check text-lg"></i>
               <span>Entrar / Recuperar Meus Treinos da Nuvem</span>
             </button>
-            <button onclick="closeOnboardingWizard(); handleGoogleAuthAction('setup');" class="w-full py-2 px-3 rounded-xl bg-bgMain border border-borderSubtle hover:border-neonGreen text-slate-300 hover:text-neonGreen text-[11px] font-bold flex items-center justify-center gap-1.5 transition">
-              <i class="ph-fill ph-google-logo text-neonGreen"></i>
-              <span>Configurar URL da Planilha Google (Admin / Amigos)</span>
-            </button>
+
           </div>
 
           <div class="pt-2 border-t border-borderSubtle/70 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
@@ -347,7 +359,7 @@
               <span>Importar arquivo Backup (.JSON)</span>
               <input type="file" accept=".json,application/json" onchange="importBackupFromFile(event); closeOnboardingWizard();" class="hidden" />
             </label>
-            <button onclick="goToWizardStep(1)" class="text-slate-300 hover:text-white font-semibold flex items-center gap-1">
+            <button onclick="goToWizardStep(1)" class="hidden text-slate-300 hover:text-white font-semibold items-center gap-1">
               <span>Primeiro acesso sem nuvem</span>
               <i class="ph-bold ph-arrow-right"></i>
             </button>
@@ -1234,16 +1246,16 @@
   </div>
 
   <!-- ==========================================
-       MODAL DE LOGIN MULTI-USUÁRIO & CONFIGURAÇÃO DA PLANILHA GOOGLE
+       MODAL DE CONTA & MEU PERFIL (SEM CONFIGURAÇÃO TÉCNICA DE PLANILHA)
        ========================================== -->
   <div id="cloudLoginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-    <div class="bg-bgCard border border-neonCyan/40 rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
+    <div class="bg-bgCard border border-neonCyan/40 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-borderSubtle pb-3">
         <div>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-neonGreen block">Banco de Dados Multi-Usuário</span>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-neonGreen block">Sincronização Automática em Nuvem</span>
           <h3 class="text-base sm:text-lg font-display font-bold text-white flex items-center gap-2">
-            <i class="ph-fill ph-table text-neonGreen text-xl"></i>
-            Conta & Planilha Google Compartilhada
+            <i class="ph-fill ph-user-circle text-neonCyan text-xl"></i>
+            Meu Perfil & Conta
           </h3>
         </div>
         <button onclick="closeCloudLoginModal()" class="w-8 h-8 rounded-xl bg-bgInput border border-borderSubtle text-slate-400 hover:text-white flex items-center justify-center">
@@ -1251,113 +1263,72 @@
         </button>
       </div>
 
-      <!-- Abas do Modal: 1. Login Atleta | 2. Configurar Planilha Google -->
-      <div class="grid grid-cols-2 gap-2 bg-bgInput p-1 rounded-2xl border border-borderSubtle">
-        <button onclick="switchCloudModalTab('login')" id="cloudModalTabBtnLogin" class="py-2 px-3 rounded-xl text-xs font-bold bg-neonCyan text-bgMain transition flex items-center justify-center gap-1.5">
-          <i class="ph-bold ph-user-circle"></i>
-          <span>1. Entrar / Trocar Atleta</span>
-        </button>
-        <button onclick="switchCloudModalTab('setup')" id="cloudModalTabBtnSetup" class="py-2 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5">
-          <i class="ph-bold ph-gear"></i>
-          <span>2. Configurar Planilha</span>
-        </button>
-      </div>
-
-      <!-- ABA 1: LOGIN / RECUPERAÇÃO DE CONTA (PARA VOCÊ E SEUS AMIGOS) -->
-      <div id="cloudModalPaneLogin" class="space-y-4">
-        <div id="activeAccountBannerInModal" class="hidden bg-emerald-950/50 border border-neonGreen/40 rounded-2xl p-3.5 flex items-center justify-between gap-2">
+      <!-- PAINEL DO ATLETA LOGADO (ATUALIZAR PESO/ALTURA/OBJETIVO SEM REABRIR WIZARD DE NÍVEL/GÊNERO) -->
+      <div id="loggedInProfileQuickPanel" class="hidden space-y-3">
+        <div class="bg-emerald-950/50 border border-neonGreen/40 rounded-2xl p-3.5 flex items-center justify-between gap-2">
           <div class="min-w-0">
-            <span class="text-[10px] font-bold uppercase text-neonGreen block">Atleta Conectado neste Aparelho</span>
+            <span class="text-[10px] font-bold uppercase text-neonGreen block">Conta Conectada na Planilha</span>
             <strong id="activeAccountModalLabel" class="text-xs sm:text-sm text-white truncate block">usuario@gmail.com</strong>
+            <span id="activeAccountLockedTrackLabel" class="text-[11px] text-slate-400 block mt-0.5">Trilha Trancada</span>
           </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="forceCloudSyncNow()" class="px-3 py-1.5 rounded-xl bg-neonGreen text-bgMain font-bold text-[11px] flex items-center gap-1">
-              <i class="ph-bold ph-arrows-clockwise"></i> Sincronizar
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button onclick="forceCloudSyncNow()" class="px-3 py-1.5 rounded-xl bg-neonGreen text-bgMain font-bold text-[11px] flex items-center justify-center gap-1">
+              <i class="ph-bold ph-arrows-clockwise"></i> Salvar Agora
             </button>
             <button onclick="logoutOrSwitchAccount()" class="px-3 py-1.5 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-bold text-[11px]">
-              Sair / Trocar
+              Trocar Usuário
             </button>
           </div>
         </div>
 
-        <p class="text-xs text-slate-300 leading-relaxed">
-          Cada pessoa que usar o aplicativo deve entrar com seu próprio <strong>Nome, E-mail e PIN</strong>. Os dados ficam separados na Planilha Google para você e seus amigos acessarem de qualquer celular!
-        </p>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">Seu Nome:</label>
-            <input type="text" id="modalCloudNameInput" placeholder="Ex: Matheus" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+        <!-- Atualização Rápida de Medidas (Salva direto no Relatório e na Planilha) -->
+        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-3">
+          <span class="text-[11px] font-bold uppercase text-neonCyan block">Atualizar Medidas & Meta Corporal</span>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Peso Atual (kg)</label>
+              <input type="number" step="0.1" id="quickProfileWeightInput" placeholder="Ex: 78.5" class="w-full bg-bgMain border border-borderSubtle focus:border-neonGreen rounded-xl px-3 py-2 text-sm font-bold text-white outline-none" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Altura (cm)</label>
+              <input type="number" step="1" id="quickProfileHeightInput" placeholder="Ex: 175" class="w-full bg-bgMain border border-borderSubtle focus:border-neonGreen rounded-xl px-3 py-2 text-sm font-bold text-white outline-none" />
+            </div>
           </div>
           <div>
-            <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">Seu E-mail:</label>
-            <input type="email" id="modalCloudEmailInput" placeholder="seuemail@gmail.com" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+            <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Objetivo de Cárdio</label>
+            <select id="quickProfileGoalSelect" class="w-full bg-bgMain border border-borderSubtle focus:border-neonGreen rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+              <option value="Ganho de Massa">💪 Ganho de Massa (30 min • 130-145 BPM)</option>
+              <option value="Definição">🔥 Definição (45 min • 140-160 BPM)</option>
+              <option value="Emagrecimento">⚡ Secar / Emagrecimento (45-60 min • 120-140 BPM)</option>
+            </select>
           </div>
-          <div>
-            <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">Seu PIN de Segurança (4+ dígitos):</label>
-            <input type="password" id="modalCloudPinInput" placeholder="PIN (4+ dígitos)" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
-          </div>
-          <button onclick="handleEmailCloudSyncLogin('modal')" id="modalCloudSubmitBtn" class="w-full py-3.5 rounded-xl bg-neonCyan hover:bg-cyan-400 text-bgMain font-display font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition">
-            <i class="ph-bold ph-cloud-arrow-up text-lg"></i>
-            <span>Conectar & Sincronizar Agora</span>
-          </button>
-        </div>
-
-        <!-- Botão de Compartilhar Link com Amigos -->
-        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <strong class="text-xs text-white block">Vai enviar para um amigo?</strong>
-            <span class="text-[11px] text-slate-400">Gere o link com a planilha já configurada para ele só criar o login dele.</span>
-          </div>
-          <button onclick="copyFriendInviteLink()" class="px-3.5 py-2 rounded-xl bg-neonAmber/20 hover:bg-neonAmber text-neonAmber hover:text-bgMain border border-neonAmber/40 font-bold text-xs shrink-0 transition flex items-center gap-1.5">
-            <i class="ph-bold ph-share-network"></i>
-            <span>Copiar Link p/ Amigos</span>
+          <button onclick="saveQuickProfileMeasures()" class="w-full py-2.5 rounded-xl bg-neonGreen hover:bg-neonGreenDark text-bgMain font-display font-bold text-xs uppercase tracking-wider transition">
+            Salvar Medidas na Planilha
           </button>
         </div>
       </div>
 
-      <!-- ABA 2: CONFIGURAR PLANILHA GOOGLE + CÓDIGO APPS SCRIPT -->
-      <div id="cloudModalPaneSetup" class="hidden space-y-4">
-        <div class="bg-bgInput border border-neonGreen/40 rounded-2xl p-4 space-y-3">
-          <label class="text-xs font-bold text-neonGreen uppercase block">
-            URL do Web App da sua Planilha Google (Termina em /exec):
-          </label>
-          <input
-            type="url"
-            id="gasWebAppUrlInput"
-            value="https://script.google.com/macros/s/AKfycbxOvmxDaHne6m2y34kBLVwLdk2G21-2maz2IdP6FtgDqPB3yFsimMn8K8wqTEgZv6ho/exec" placeholder="https://script.google.com/macros/s/AKfycb.../exec"
-            class="w-full bg-bgMain border border-borderSubtle focus:border-neonGreen rounded-xl px-3.5 py-2.5 text-xs font-mono text-white outline-none"
-          />
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="saveGasWebAppUrl()" class="px-4 py-2.5 rounded-xl bg-neonGreen hover:bg-neonGreenDark text-bgMain font-display font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
-              <i class="ph-bold ph-check-circle"></i>
-              <span>Salvar e Testar Planilha</span>
-            </button>
-            <button onclick="copyFriendInviteLink()" class="px-3.5 py-2.5 rounded-xl bg-bgMain border border-borderSubtle hover:border-neonCyan text-neonCyan font-bold text-xs flex items-center gap-1.5">
-              <i class="ph-bold ph-link"></i>
-              <span>Copiar Link com Planilha Embutida</span>
-            </button>
-          </div>
-          <p id="gasConnectionStatusText" class="text-[11px] text-slate-400">
-            ✓ Planilha Google Oficial (Treinos) já conectada automaticamente para você e seus amigos!
-          </p>
+      <!-- FORMULÁRIO DE LOGIN / ENTRAR COM OUTRO USUÁRIO -->
+      <div id="cloudModalLoginFormBox" class="space-y-2.5">
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Digite seu <strong>Nome, E-mail e PIN</strong>. Se você já tiver cadastro na planilha, seus treinos, cargas e relatórios serão abertos na hora. Se for seu primeiro acesso, você escolherá seu perfil em seguida!
+        </p>
+        <div>
+          <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">Seu Nome:</label>
+          <input type="text" id="modalCloudNameInput" placeholder="Ex: Matheus" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
         </div>
-
-        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-4 space-y-2.5 text-xs">
-          <div class="flex items-center justify-between gap-2">
-            <strong class="text-white font-display uppercase">Como Criar a Planilha (1 Minuto • Só Você Faz Isso):</strong>
-            <button onclick="copyGoogleAppsScriptCode()" class="px-3 py-1.5 rounded-lg bg-neonAmber text-bgMain font-bold text-[11px] flex items-center gap-1 shrink-0">
-              <i class="ph-bold ph-copy"></i> Copiar Código .GS
-            </button>
-          </div>
-          <ol class="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed">
-            <li>Crie uma Planilha Google vazia e clique em <strong>Extensões &gt; Apps Script</strong>.</li>
-            <li>Apague tudo, clique em <strong>Copiar Código .GS</strong> acima e cole lá no Apps Script.</li>
-            <li>Clique em <strong>Implantar &gt; Nova implantação &gt; App da Web</strong>.</li>
-            <li>Em <em>Quem pode acessar</em>, selecione <strong>Qualquer pessoa</strong> e clique em Implantar.</li>
-            <li>Copie a <strong>URL do app da Web</strong> gerada e cole no campo acima!</li>
-          </ol>
+        <div>
+          <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">Seu E-mail:</label>
+          <input type="email" id="modalCloudEmailInput" placeholder="seuemail@gmail.com" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
         </div>
+        <div>
+          <label class="text-[11px] font-bold uppercase text-slate-300 block mb-1">PIN de Segurança (4+ dígitos):</label>
+          <input type="password" id="modalCloudPinInput" placeholder="PIN (4+ dígitos)" class="w-full bg-bgInput border border-borderSubtle focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none" />
+        </div>
+        <button onclick="handleEmailCloudSyncLogin('modal')" id="modalCloudSubmitBtn" class="w-full py-3.5 rounded-xl bg-neonCyan hover:bg-cyan-400 text-bgMain font-display font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition">
+          <i class="ph-bold ph-cloud-arrow-up text-lg"></i>
+          <span>Conectar & Sincronizar Agora</span>
+        </button>
       </div>
     </div>
   </div>
@@ -1409,6 +1380,63 @@
         </button>
         <button onclick="saveEditedWorkoutSession()" class="px-5 py-2.5 rounded-xl bg-[#3B66F5] hover:bg-blue-500 text-white font-display font-bold text-xs uppercase tracking-wider">
           Salvar Alterações
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE INSTALAÇÃO DO APLICATIVO (PWA NATIVO)
+       ========================================== -->
+  <div id="pwaInstallModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-bgCard border border-neonGreen/40 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
+      <div class="flex items-center justify-between border-b border-borderSubtle pb-3">
+        <div class="flex items-center gap-3">
+          <img src="data:image/png;base64,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" alt="Ícone Projeto 60D" class="w-12 h-12 rounded-2xl border border-neonGreen/40 shadow-md" />
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-neonGreen block">Aplicativo Instalável (PWA)</span>
+            <h3 class="text-base font-display font-bold text-white">Instalar no Celular</h3>
+          </div>
+        </div>
+        <button onclick="closePwaInstallModal()" class="w-8 h-8 rounded-xl bg-bgInput border border-borderSubtle text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+
+      <!-- Botão de Instalação Automática (Quando o Chrome/Android libera o prompt nativo) -->
+      <div id="pwaNativePromptBox" class="hidden bg-neonGreen/10 border border-neonGreen/40 rounded-2xl p-4 text-center space-y-2.5">
+        <p class="text-xs text-slate-200 font-semibold">Seu navegador suporta instalação direta com 1 toque!</p>
+        <button onclick="triggerNativePwaInstall()" class="w-full py-3 rounded-xl bg-neonGreen hover:bg-neonGreenDark text-bgMain font-display font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg transition flex items-center justify-center gap-2">
+          <i class="ph-bold ph-download-simple text-lg"></i>
+          <span>Instalar Aplicativo Agora</span>
+        </button>
+      </div>
+
+      <div class="space-y-2.5 text-xs">
+        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-1.5">
+          <strong class="text-neonCyan flex items-center gap-1.5">
+            <i class="ph-fill ph-android-logo text-base"></i>
+            Android (Chrome / Samsung Internet):
+          </strong>
+          <p class="text-slate-300 leading-relaxed">
+            Toque nos <strong>3 pontinhos (⋮)</strong> no canto do navegador e selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.
+          </p>
+        </div>
+
+        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-1.5">
+          <strong class="text-white flex items-center gap-1.5">
+            <i class="ph-fill ph-apple-logo text-base"></i>
+            iPhone / iOS (Safari):
+          </strong>
+          <p class="text-slate-300 leading-relaxed">
+            Toque no ícone de <strong>Compartilhar (quadrado com seta p/ cima)</strong> na barra inferior do Safari e escolha <strong>"Adicionar à Tela de Início"</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-1 flex justify-end">
+        <button onclick="closePwaInstallModal()" class="px-5 py-2.5 rounded-xl bg-bgInput border border-borderSubtle text-slate-200 text-xs font-bold">
+          Entendi
         </button>
       </div>
     </div>
@@ -7427,7 +7455,23 @@
     /*************************************************************************
      * 14C. LÓGICA DO WIZARD PASSO A PASSO (PASSO 0: LOGIN -> PASSO 1: GÊNERO -> PASSO 2: MEDIDAS -> PASSO 3: NÍVEL)
      *************************************************************************/
+    let isNewUserSetupFlow = false;
+
     function openOnboardingWizard(startStep = 0) {
+      // Se o usuário já existe e já concluiu o cadastro inicial, nunca mais exibe as telas de Masculino/Feminino ou Nível: abre apenas o modal rápido de Perfil/Medidas!
+      if (appState.onboardingDone && appState.levelLocked && appState.cloudAccountEmail && !isNewUserSetupFlow) {
+        handleGoogleAuthAction();
+        return;
+      }
+      // Se ainda não fez login, força sempre começar no Passo 0 (Login na Planilha)
+      if (!appState.cloudAccountEmail && !isNewUserSetupFlow) {
+        startStep = 0;
+      }
+      const closeBtn = document.getElementById("wizardCloseBtn");
+      if (closeBtn) {
+        if (!appState.onboardingDone) closeBtn.classList.add("hidden");
+        else closeBtn.classList.remove("hidden");
+      }
       const currentPlan = getActivePlan();
       wizardState = {
         step: startStep,
@@ -7470,6 +7514,10 @@
     }
 
     function goToWizardStep(stepNumber) {
+      if (stepNumber > 0 && !isNewUserSetupFlow && (!appState.cloudAccountEmail || (appState.onboardingDone && appState.levelLocked))) {
+        showToast("Faça login com seu Nome, E-mail e PIN primeiro para verificarmos seu cadastro na planilha!", "warning");
+        stepNumber = 0;
+      }
       if (appState.levelLocked && appState.onboardingDone && stepNumber !== 2 && stepNumber !== 0) {
         const lockNotice = document.getElementById("wizardLevelLockedNotice");
         if (lockNotice) lockNotice.classList.remove("hidden");
@@ -7698,7 +7746,9 @@
         showToast("Medidas e treino atualizados!", "success");
       }
 
+      isNewUserSetupFlow = false;
       saveState();
+      pushStateToCloud(appState);
       closeOnboardingWizard();
       updateGenderButtonsUI();
       renderActiveWorkout();
@@ -7977,37 +8027,19 @@
     }
 
     /*************************************************************************
-     * 16. MOTOR MULTI-USUÁRIO GOOGLE PLANILHAS (APPS SCRIPT) + FALLBACK NUVEM
+     * 16. MOTOR MULTI-USUÁRIO GOOGLE PLANILHAS (INTEGRADO E TRANSPARENTE)
      *************************************************************************/
-    // Se quiser deixar a URL fixa no código antes de enviar aos amigos, basta colar a URL /exec abaixo:
     const DEFAULT_GOOGLE_SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxOvmxDaHne6m2y34kBLVwLdk2G21-2maz2IdP6FtgDqPB3yFsimMn8K8wqTEgZv6ho/exec";
     const GAS_URL_STORAGE_KEY = "BALESTRIN_60D_GAS_WEBAPP_URL";
-    const GOOGLE_APPS_SCRIPT_TEMPLATE = "/**\n * ============================================================================\n * SISTEMA DE TREINO - PROJETO 60 DIAS (BACKEND MULTI-USU\u00c1RIO GOOGLE PLANILHAS)\n * ============================================================================\n * COMO INSTALAR (LEVA 1 MINUTO):\n * 1. Crie uma Planilha Google em branco (https://sheets.new).\n * 2. No menu superior, clique em \"Extens\u00f5es\" > \"Apps Script\".\n * 3. Apague tudo que estiver no editor e cole todo este c\u00f3digo.\n * 4. Clique no \u00edcone de Disquete (Salvar) e depois no bot\u00e3o azul \"Implantar\" > \"Nova implanta\u00e7\u00e3o\".\n * 5. Em \"Selecionar tipo\", escolha \"App da Web\".\n * 6. Em \"Executar como\", deixe \"Eu\" (sua conta Google).\n * 7. Em \"Quem pode acessar\", escolha OBRIGATORIAMENTE \"Qualquer pessoa\".\n * 8. Clique em \"Implantar\", autorize o acesso (Avan\u00e7ado > Ir para o projeto) e copie a \"URL do app da Web\".\n * 9. Cole essa URL no bot\u00e3o \"Nuvem / Planilha\" dentro do site!\n */\n\nconst SHEET_USERS = \"Usuarios\";\nconst SHEET_WORKOUTS = \"Historico_Treinos\";\nconst SHEET_WEIGHTS = \"Historico_Peso\";\n\nfunction ensureSheetsStructure() {\n  const ss = SpreadsheetApp.getActiveSpreadsheet();\n\n  // 1. Aba de Usu\u00e1rios (1 linha por pessoa)\n  let uSheet = ss.getSheetByName(SHEET_USERS);\n  if (!uSheet) {\n    uSheet = ss.insertSheet(SHEET_USERS);\n    uSheet.appendRow([\n      \"Email\",\n      \"Nome\",\n      \"PinHash\",\n      \"Genero\",\n      \"Nivel\",\n      \"FichaAtual\",\n      \"PesoAtual_kg\",\n      \"Altura_cm\",\n      \"Objetivo\",\n      \"TotalTreinos\",\n      \"UltimaSincronizacao\",\n      \"JSON_Estado_Completo\"\n    ]);\n    uSheet.getRange(\"A1:L1\").setFontWeight(\"bold\").setBackground(\"#10B981\").setFontColor(\"#0B0F17\");\n    uSheet.setFrozenRows(1);\n  }\n\n  // 2. Aba de Hist\u00f3rico de Treinos (Auditoria multi-usu\u00e1rio)\n  let wSheet = ss.getSheetByName(SHEET_WORKOUTS);\n  if (!wSheet) {\n    wSheet = ss.insertSheet(SHEET_WORKOUTS);\n    wSheet.appendRow([\n      \"ID_Sessao\",\n      \"DataHora\",\n      \"Email\",\n      \"Nome\",\n      \"Nivel\",\n      \"Ficha\",\n      \"TreinoDia\",\n      \"SeriesFeitas\",\n      \"Duracao_min\",\n      \"VolumeTotal_kg\"\n    ]);\n    wSheet.getRange(\"A1:J1\").setFontWeight(\"bold\").setBackground(\"#3B66F5\").setFontColor(\"#FFFFFF\");\n    wSheet.setFrozenRows(1);\n  }\n\n  // 3. Aba de Hist\u00f3rico de Peso\n  let pSheet = ss.getSheetByName(SHEET_WEIGHTS);\n  if (!pSheet) {\n    pSheet = ss.insertSheet(SHEET_WEIGHTS);\n    pSheet.appendRow([\n      \"ID_Pesagem\",\n      \"Data\",\n      \"Email\",\n      \"Nome\",\n      \"Peso_kg\",\n      \"IMC\",\n      \"Fase\",\n      \"Observacao\"\n    ]);\n    pSheet.getRange(\"A1:H1\").setFontWeight(\"bold\").setBackground(\"#06B6D4\").setFontColor(\"#0B0F17\");\n    pSheet.setFrozenRows(1);\n  }\n\n  return { ss, uSheet, wSheet, pSheet };\n}\n\nfunction jsonResponse(obj) {\n  return ContentService\n    .createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\nfunction doGet(e) {\n  try {\n    ensureSheetsStructure();\n    const action = (e && e.parameter && e.parameter.action) || \"ping\";\n    if (action === \"ping\") {\n      return jsonResponse({ ok: true, status: \"online\", message: \"Banco Google Planilhas Multi-Usu\u00e1rio Ativo!\" });\n    }\n    return jsonResponse({ ok: true, status: \"ready\" });\n  } catch (err) {\n    return jsonResponse({ ok: false, error: String(err) });\n  }\n}\n\nfunction doPost(e) {\n  const lock = LockService.getScriptLock();\n  lock.waitLock(15000);\n  try {\n    const { uSheet, wSheet, pSheet } = ensureSheetsStructure();\n    const rawBody = e && e.postData && e.postData.contents ? e.postData.contents : \"{}\";\n    const body = JSON.parse(rawBody);\n    const action = body.action || \"sync\";\n    const email = String(body.email || \"\").trim().toLowerCase();\n    const pinHash = String(body.pinHash || \"\").trim();\n    const userName = String(body.userName || email.split(\"@\")[0] || \"Atleta\").trim();\n\n    if (!email || !pinHash) {\n      return jsonResponse({ ok: false, error: \"E-mail e PIN s\u00e3o obrigat\u00f3rios.\" });\n    }\n\n    const data = uSheet.getDataRange().getValues();\n    let userRowIndex = -1;\n    let existingRow = null;\n\n    for (let i = 1; i < data.length; i++) {\n      if (String(data[i][0]).trim().toLowerCase() === email) {\n        userRowIndex = i + 1; // 1-indexed no Sheets\n        existingRow = data[i];\n        break;\n      }\n    }\n\n    // 1. A\u00c7\u00c3O: LOGIN / RECUPERAR CONTA\n    if (action === \"login\") {\n      if (userRowIndex === -1) {\n        // Novo usu\u00e1rio: se enviou estado inicial, j\u00e1 cria a linha\n        const initState = body.state || {};\n        const nowStr = new Date().toLocaleString(\"pt-BR\");\n        uSheet.appendRow([\n          email,\n          userName,\n          pinHash,\n          initState.genderProfile || \"Masculino\",\n          initState.activePlanId || \"inic_01\",\n          initState.activePlanId || \"inic_01\",\n          initState.userWeight || \"\",\n          initState.userHeight || \"\",\n          initState.userGoal || \"Defini\u00e7\u00e3o\",\n          (initState.completedWorkouts || []).length,\n          nowStr,\n          JSON.stringify(initState)\n        ]);\n        return jsonResponse({\n          ok: true,\n          isNewUser: true,\n          message: \"Nova conta criada na Planilha Google!\",\n          state: initState\n        });\n      } else {\n        const savedPinHash = String(existingRow[2]).trim();\n        if (savedPinHash !== pinHash) {\n          return jsonResponse({\n            ok: false,\n            error: \"PIN incorreto para este e-mail! Verifique sua senha de 4+ d\u00edgitos.\"\n          });\n        }\n        let parsedState = {};\n        try {\n          parsedState = JSON.parse(existingRow[11] || \"{}\");\n        } catch (err) {\n          parsedState = {};\n        }\n        return jsonResponse({\n          ok: true,\n          isNewUser: false,\n          userName: existingRow[1] || userName,\n          message: \"Dados recuperados da Planilha Google com sucesso!\",\n          state: parsedState\n        });\n      }\n    }\n\n    // 2. A\u00c7\u00c3O: SALVAR / SINCRONIZAR ESTADO COMPLETO\n    if (action === \"save\") {\n      const state = body.state || {};\n      const nowStr = new Date().toLocaleString(\"pt-BR\");\n\n      if (userRowIndex !== -1) {\n        const savedPinHash = String(existingRow[2]).trim();\n        if (savedPinHash !== pinHash) {\n          return jsonResponse({\n            ok: false,\n            error: \"PIN inv\u00e1lido para atualizar esta conta.\"\n          });\n        }\n        const finalName = state.userName || existingRow[1] || userName;\n        uSheet.getRange(userRowIndex, 1, 1, 12).setValues([[\n          email,\n          finalName,\n          pinHash,\n          state.genderProfile || \"Masculino\",\n          state.activePlanId || \"\",\n          state.activePlanId || \"\",\n          state.userWeight || \"\",\n          state.userHeight || \"\",\n          state.userGoal || \"\",\n          (state.completedWorkouts || []).length,\n          nowStr,\n          JSON.stringify(state)\n        ]]);\n      } else {\n        uSheet.appendRow([\n          email,\n          state.userName || userName,\n          pinHash,\n          state.genderProfile || \"Masculino\",\n          state.activePlanId || \"\",\n          state.activePlanId || \"\",\n          state.userWeight || \"\",\n          state.userHeight || \"\",\n          state.userGoal || \"\",\n          (state.completedWorkouts || []).length,\n          nowStr,\n          JSON.stringify(state)\n        ]);\n      }\n\n      // Sincroniza \u00faltimas sess\u00f5es de treino na aba Historico_Treinos sem duplicar ID_Sessao\n      if (Array.isArray(state.completedWorkouts) && state.completedWorkouts.length > 0) {\n        const wData = wSheet.getDataRange().getValues();\n        const existingWorkoutIds = new Set();\n        for (let i = 1; i < wData.length; i++) {\n          existingWorkoutIds.add(String(wData[i][0]));\n        }\n        const recentWorkouts = state.completedWorkouts.slice(0, 15).reverse();\n        recentWorkouts.forEach(sess => {\n          if (sess && sess.id && !existingWorkoutIds.has(String(sess.id))) {\n            wSheet.appendRow([\n              sess.id,\n              sess.date || nowStr,\n              email,\n              state.userName || userName,\n              sess.level || \"\",\n              sess.planName || \"\",\n              sess.dayTitle || \"\",\n              sess.setsDone || 0,\n              sess.durationMin || 0,\n              sess.totalVolume || 0\n            ]);\n          }\n        });\n      }\n\n      // Sincroniza \u00faltimas pesagens na aba Historico_Peso sem duplicar ID_Pesagem\n      if (Array.isArray(state.weightTimeline) && state.weightTimeline.length > 0) {\n        const pData = pSheet.getDataRange().getValues();\n        const existingWeightIds = new Set();\n        for (let i = 1; i < pData.length; i++) {\n          existingWeightIds.add(String(pData[i][0]));\n        }\n        const recentWeights = state.weightTimeline.slice(-15);\n        recentWeights.forEach(wEntry => {\n          if (wEntry && wEntry.id && !existingWeightIds.has(String(wEntry.id))) {\n            pSheet.appendRow([\n              wEntry.id,\n              wEntry.date || nowStr,\n              email,\n              state.userName || userName,\n              wEntry.weight || \"\",\n              wEntry.bmi || \"\",\n              wEntry.phase || \"\",\n              wEntry.note || \"\"\n            ]);\n          }\n        });\n      }\n\n      return jsonResponse({\n        ok: true,\n        updatedAt: Date.now(),\n        message: \"Sincronizado na Planilha Google!\"\n      });\n    }\n\n    return jsonResponse({ ok: false, error: \"A\u00e7\u00e3o desconhecida.\" });\n  } catch (err) {\n    return jsonResponse({ ok: false, error: String(err) });\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
 
     let cloudDb = null;
     let cloudAuth = null;
     let currentCloudUser = null;
-    let unsubscribeCloudSnapshot = null;
     let isApplyingCloudUpdate = false;
     let syncDebounceTimer = null;
-    let firebaseFns = {};
-    const cloudAppId = typeof __app_id !== "undefined" ? __app_id : "balestrin-60d-pro-app";
 
     function getConfiguredGasUrl() {
-      try {
-        // 1. Verifica se veio ?gas=... ou ?api=... no link compartilhado com amigos
-        const params = new URLSearchParams(window.location.search);
-        const urlParam = params.get("gas") || params.get("api");
-        if (urlParam && urlParam.startsWith("https://script.google.com/")) {
-          localStorage.setItem(GAS_URL_STORAGE_KEY, urlParam.trim());
-          return urlParam.trim();
-        }
-        // 2. Verifica se já está salvo no aparelho ou no estado
-        const stored = localStorage.getItem(GAS_URL_STORAGE_KEY) || appState.gasWebAppUrl || DEFAULT_GOOGLE_SHEETS_WEBAPP_URL;
-        return (stored || "").trim();
-      } catch (e) {
-        return DEFAULT_GOOGLE_SHEETS_WEBAPP_URL;
-      }
+      return DEFAULT_GOOGLE_SHEETS_WEBAPP_URL;
     }
 
     function buildCloudVaultKey(email, pin) {
@@ -8031,55 +8063,58 @@
       const histDesc = document.getElementById("historyCloudDesc");
       const histUid = document.getElementById("historyCloudUidText");
       const histBtnLabel = document.getElementById("historyGoogleBtnLabel");
-      const activeBanner = document.getElementById("activeAccountBannerInModal");
+      const loggedInPanel = document.getElementById("loggedInProfileQuickPanel");
+      const loginFormBox = document.getElementById("cloudModalLoginFormBox");
       const activeModalLabel = document.getElementById("activeAccountModalLabel");
+      const lockedTrackLabel = document.getElementById("activeAccountLockedTrackLabel");
 
       const linkedEmail = appState.cloudAccountEmail || user?.email || null;
       const displayName = appState.userName || (linkedEmail ? linkedEmail.split("@")[0] : null);
-      const gasUrl = getConfiguredGasUrl();
+      const currentPlan = getActivePlan();
 
-      if (linkedEmail) {
+      if (linkedEmail && appState.onboardingDone) {
         if (topBtnText) topBtnText.textContent = displayName;
         if (topBtnIcon) topBtnIcon.className = "ph-fill ph-cloud-check text-neonGreen text-sm";
         if (histTitle) histTitle.textContent = `Atleta Conectado: ${displayName} (${linkedEmail})`;
         if (histBadge) {
-          histBadge.textContent = gasUrl ? "Planilha Google Ativa" : "Conta Conectada";
+          histBadge.textContent = "Salvo na Planilha";
           histBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-neonGreen/20 text-neonGreen border border-neonGreen/30";
         }
         if (histDesc) {
-          histDesc.textContent = gasUrl
-            ? "Sincronizando automaticamente na Planilha Google Multi-Usuário."
-            : "Conta vinculada! Configure a URL da Planilha Google para sincronizar entre aparelhos.";
+          histDesc.textContent = "Todos os seus treinos, cargas, evolução por exercício e registros de peso ficam salvos automaticamente na Planilha Google.";
         }
-        if (histBtnLabel) histBtnLabel.textContent = "Trocar Atleta / Planilha";
-        if (activeBanner) activeBanner.classList.remove("hidden");
-        if (activeModalLabel) activeModalLabel.textContent = `${displayName} • ${linkedEmail}`;
+        if (histBtnLabel) histBtnLabel.textContent = "Meu Perfil / Trocar Conta";
+        if (loggedInPanel) loggedInPanel.classList.remove("hidden");
+        if (loginFormBox) loginFormBox.classList.add("hidden");
+        if (activeModalLabel) activeModalLabel.textContent = `${displayName} (${linkedEmail})`;
+        if (lockedTrackLabel) {
+          lockedTrackLabel.textContent = `Trilha: ${appState.genderProfile} • ${currentPlan ? currentPlan.level : "Iniciante"}`;
+        }
       } else {
         if (topBtnText) topBtnText.textContent = "Entrar Google";
         if (topBtnIcon) topBtnIcon.className = "ph-fill ph-cloud-arrow-up text-neonCyan text-sm";
-        if (histTitle) histTitle.textContent = "Banco de Dados em Nuvem (Google Planilhas)";
-        if (histBtnLabel) histBtnLabel.textContent = "Conectar Conta / Planilha";
-        if (activeBanner) activeBanner.classList.add("hidden");
+        if (histTitle) histTitle.textContent = "Sincronização Automática na Nuvem";
+        if (histBtnLabel) histBtnLabel.textContent = "Entrar na Conta";
+        if (loggedInPanel) loggedInPanel.classList.add("hidden");
+        if (loginFormBox) loginFormBox.classList.remove("hidden");
       }
 
       if (histUid) {
-        histUid.textContent = gasUrl
-          ? `Planilha Google conectada (${linkedEmail || "Aguardando login do atleta"})`
-          : "Planilha Google ainda não vinculada (clique em Conta Nuvem > Configurar Planilha)";
+        histUid.textContent = linkedEmail
+          ? `Sincronização ativa para: ${linkedEmail}`
+          : "Faça login para carregar seus treinos e relatórios.";
       }
 
       if (syncBadge) {
         syncBadge.innerHTML = `<i class="ph-fill ph-cloud-check text-neonGreen"></i><span>${
-          statusMessage || (linkedEmail ? (gasUrl ? `Planilha: ${displayName} ✓` : `Atleta: ${displayName}`) : "Conectar Planilha")
+          statusMessage || (linkedEmail ? `Nuvem: ${displayName} ✓` : "Não conectado")
         }</span>`;
       }
     }
 
-    // Envia o estado atual para a Planilha Google (via Apps Script) e/ou Firebase se disponível
     async function pushStateToCloud(stateObj) {
       if (isApplyingCloudUpdate) return;
 
-      // Salva também em cache isolado por e-mail no dispositivo para troca rápida de usuário
       if (stateObj.cloudAccountEmail) {
         try {
           localStorage.setItem(
@@ -8112,23 +8147,8 @@
           }
         } catch (err) {
           console.warn("Aviso ao sincronizar com Google Planilhas:", err);
-          updateCloudAuthUI(currentCloudUser, "Offline (Salvo no Aparelho)");
+          updateCloudAuthUI(currentCloudUser, "Salvo Localmente");
         }
-      }
-
-      // Fallback Firebase se existir no ambiente
-      if (cloudDb && currentCloudUser && firebaseFns.doc && firebaseFns.setDoc) {
-        try {
-          const docRef = stateObj.cloudAccountKey
-            ? firebaseFns.doc(cloudDb, "artifacts", cloudAppId, "public", "data", "userCloudAccounts", stateObj.cloudAccountKey)
-            : firebaseFns.doc(cloudDb, "artifacts", cloudAppId, "users", currentCloudUser.uid, "workoutData", "mainState");
-          await firebaseFns.setDoc(docRef, {
-            email: stateObj.cloudAccountEmail || "",
-            payloadJson: JSON.stringify(stateObj),
-            updatedAt: Date.now()
-          });
-          updateCloudAuthUI(currentCloudUser, "Salvo na Nuvem ✓");
-        } catch (e) {}
       }
     }
 
@@ -8136,42 +8156,28 @@
       if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
       syncDebounceTimer = setTimeout(() => {
         pushStateToCloud(stateObj);
-      }, 700);
+      }, 500);
     };
 
     window.forceCloudSyncNow = async function () {
       await pushStateToCloud(appState);
-      showToast("Dados sincronizados com a Planilha Google!", "success");
+      showToast("Treinos, pesos e relatório sincronizados na Planilha Google!", "success");
     };
 
-    window.switchCloudModalTab = function (tab) {
-      const loginPane = document.getElementById("cloudModalPaneLogin");
-      const setupPane = document.getElementById("cloudModalPaneSetup");
-      const btnLogin = document.getElementById("cloudModalTabBtnLogin");
-      const btnSetup = document.getElementById("cloudModalTabBtnSetup");
-
-      if (tab === "setup") {
-        loginPane.classList.add("hidden");
-        setupPane.classList.remove("hidden");
-        btnSetup.className = "py-2 px-3 rounded-xl text-xs font-bold bg-neonGreen text-bgMain transition flex items-center justify-center gap-1.5";
-        btnLogin.className = "py-2 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5";
-        const urlInput = document.getElementById("gasWebAppUrlInput");
-        if (urlInput) urlInput.value = getConfiguredGasUrl();
-      } else {
-        setupPane.classList.add("hidden");
-        loginPane.classList.remove("hidden");
-        btnLogin.className = "py-2 px-3 rounded-xl text-xs font-bold bg-neonCyan text-bgMain transition flex items-center justify-center gap-1.5";
-        btnSetup.className = "py-2 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5";
-      }
-    };
-
-    window.handleGoogleAuthAction = function (defaultTab = "login") {
+    window.handleGoogleAuthAction = function () {
       const emailInput = document.getElementById("modalCloudEmailInput");
       const nameInput = document.getElementById("modalCloudNameInput");
+      const wQuick = document.getElementById("quickProfileWeightInput");
+      const hQuick = document.getElementById("quickProfileHeightInput");
+      const gQuick = document.getElementById("quickProfileGoalSelect");
+
       if (emailInput && appState.cloudAccountEmail) emailInput.value = appState.cloudAccountEmail;
       if (nameInput && appState.userName) nameInput.value = appState.userName;
+      if (wQuick) wQuick.value = appState.userWeight || "";
+      if (hQuick) hQuick.value = appState.userHeight || "";
+      if (gQuick) gQuick.value = appState.userGoal || "Definição";
+
       updateCloudAuthUI(currentCloudUser);
-      switchCloudModalTab(defaultTab);
       document.getElementById("cloudLoginModal").classList.remove("hidden");
     };
 
@@ -8179,88 +8185,36 @@
       document.getElementById("cloudLoginModal").classList.add("hidden");
     };
 
-    window.saveGasWebAppUrl = async function () {
-      const input = document.getElementById("gasWebAppUrlInput");
-      const statusText = document.getElementById("gasConnectionStatusText");
-      const url = (input?.value || "").trim();
-      if (!url || !url.startsWith("https://script.google.com/")) {
-        showToast("Cole uma URL válida do Google Apps Script iniciando com https://script.google.com/...", "warning");
-        return;
-      }
-      try {
-        localStorage.setItem(GAS_URL_STORAGE_KEY, url);
-      } catch (e) {}
-      appState.gasWebAppUrl = url;
-      saveState(true);
+    window.saveQuickProfileMeasures = async function () {
+      const wVal = document.getElementById("quickProfileWeightInput")?.value.trim();
+      const hVal = document.getElementById("quickProfileHeightInput")?.value.trim();
+      const gVal = document.getElementById("quickProfileGoalSelect")?.value || "Definição";
 
-      if (statusText) statusText.innerHTML = `<span class="text-neonAmber">Testando conexão com a Planilha Google...</span>`;
-      try {
-        const pingEndpoint = url + (url.includes("?") ? "&" : "?") + "action=ping";
-        const resp = await fetch(pingEndpoint, { method: "GET", redirect: "follow" });
-        const data = await resp.json();
-        if (data && data.ok) {
-          if (statusText) statusText.innerHTML = `<span class="text-neonGreen font-bold">✓ Planilha Google conectada e pronta para múltiplos usuários!</span>`;
-          showToast("Planilha Google conectada com sucesso!", "success");
-          if (appState.cloudAccountEmail && appState.cloudAccountKey) {
-            await pushStateToCloud(appState);
-          }
-          updateCloudAuthUI(currentCloudUser, "Planilha Ativa ✓");
-          return;
-        }
-      } catch (err) {
-        if (statusText) {
-          statusText.innerHTML = `<span class="text-neonCyan">URL salva! Se estiver em ambiente de pré-visualização, teste no navegador ou faça login na aba 1.</span>`;
-        }
-        showToast("URL da Planilha Google salva!", "success");
-      }
-    };
+      if (hVal) appState.userHeight = hVal;
+      appState.userGoal = gVal;
 
-    window.copyGoogleAppsScriptCode = function () {
-      const temp = document.createElement("textarea");
-      temp.value = GOOGLE_APPS_SCRIPT_TEMPLATE;
-      document.body.appendChild(temp);
-      temp.select();
-      try {
-        document.execCommand("copy");
-        showToast("Código do Google Apps Script copiado! Cole em Extensões > Apps Script na sua Planilha.", "success");
-      } catch (e) {
-        showToast("Erro ao copiar código.", "warning");
+      if (wVal && parseFloat(wVal) > 0) {
+        recordBodyWeightInTimeline(wVal, "Atualização no Perfil");
       }
-      document.body.removeChild(temp);
-    };
 
-    window.copyFriendInviteLink = function () {
-      const gasUrl = getConfiguredGasUrl();
-      if (!gasUrl) {
-        switchCloudModalTab("setup");
-        showToast("Configure primeiro a URL da Planilha Google na aba 2 para gerar o link dos amigos!", "warning");
-        return;
-      }
-      const baseUrl = window.location.origin + window.location.pathname;
-      const inviteUrl = `${baseUrl}?gas=${encodeURIComponent(gasUrl)}`;
-      const temp = document.createElement("textarea");
-      temp.value = inviteUrl;
-      document.body.appendChild(temp);
-      temp.select();
-      try {
-        document.execCommand("copy");
-        showToast("Link de convite copiado! Envie aos seus amigos no WhatsApp.", "success");
-      } catch (e) {
-        showToast("Link gerado: " + inviteUrl, "info");
-      }
-      document.body.removeChild(temp);
+      saveState();
+      await pushStateToCloud(appState);
+      renderActiveWorkout();
+      renderHistoryTab();
+      closeCloudLoginModal();
+      showToast("Medidas e peso salvos no Relatório e na Planilha Google!", "success");
     };
 
     window.logoutOrSwitchAccount = function () {
       openCustomDialog(
-        "Trocar de Atleta / Sair da Conta",
-        "Deseja sair da conta atual neste aparelho para entrar com outro usuário? Seus dados sincronizados na Planilha Google permanecem salvos.",
+        "Trocar de Usuário / Sair",
+        "Deseja sair da conta atual neste aparelho para entrar com outro usuário? Todos os dados já estão salvos na Planilha Google.",
         () => {
-          const keepGasUrl = getConfiguredGasUrl();
+          isNewUserSetupFlow = false;
           appState = {
             onboardingDone: false,
             levelLocked: false,
-            gasWebAppUrl: keepGasUrl,
+            gasWebAppUrl: DEFAULT_GOOGLE_SHEETS_WEBAPP_URL,
             userName: "",
             cloudAccountEmail: "",
             cloudAccountKey: "",
@@ -8291,7 +8245,7 @@
           renderActiveWorkout();
           renderHistoryTab();
           openOnboardingWizard(0);
-          showToast("Sessão encerrada. Pronto para conectar outro atleta!", "info");
+          showToast("Sessão encerrada. Digite o Nome, E-mail e PIN do atleta.", "info");
         }
       );
     };
@@ -8317,10 +8271,11 @@
       const vaultKey = buildCloudVaultKey(email, pin);
       const gasUrl = getConfiguredGasUrl();
 
-      // 1. Tenta autenticar/recuperar na Planilha Google Multi-Usuário
+      // 1. Consulta a Planilha Google Oficial para verificar se o usuário já existe lá
       if (gasUrl) {
         try {
-          updateCloudAuthUI(currentCloudUser, "Consultando Planilha Google...");
+          updateCloudAuthUI(currentCloudUser, "Verificando na Planilha...");
+          showToast("Verificando seu cadastro na Planilha Google...", "info");
           const resp = await fetch(gasUrl, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -8330,7 +8285,8 @@
               userName: userName,
               pinHash: vaultKey,
               state: {
-                ...appState,
+                onboardingDone: false,
+                levelLocked: false,
                 userName: userName,
                 cloudAccountEmail: email,
                 cloudAccountKey: vaultKey
@@ -8341,13 +8297,20 @@
           const resJson = await resp.json();
 
           if (!resJson.ok) {
-            showToast(resJson.error || "Erro ao autenticar na Planilha Google.", "warning");
+            showToast(resJson.error || "PIN incorreto ou erro ao consultar a planilha.", "warning");
             updateCloudAuthUI(currentCloudUser, "Erro de Login");
             return;
           }
 
-          if (!resJson.isNewUser && resJson.state && Object.keys(resJson.state).length > 0) {
+          const hasCompletedSetupInSheet =
+            !resJson.isNewUser &&
+            resJson.state &&
+            Boolean(resJson.state.onboardingDone && resJson.state.levelLocked);
+
+          if (hasCompletedSetupInSheet) {
+            // O USUÁRIO JÁ EXISTE NA PLANILHA! Carrega tudo e vai direto para o treino (sem mostrar escolha de Masculino/Feminino, Peso/Altura ou Nível)
             isApplyingCloudUpdate = true;
+            isNewUserSetupFlow = false;
             appState = {
               ...appState,
               ...resJson.state,
@@ -8355,102 +8318,191 @@
               cloudAccountEmail: email,
               cloudAccountKey: vaultKey,
               gasWebAppUrl: gasUrl,
-              onboardingDone: true
+              onboardingDone: true,
+              levelLocked: true
             };
             ensurePlanProgressIntegrity();
             saveState(true);
             isApplyingCloudUpdate = false;
 
-            updateCloudAuthUI(currentCloudUser, "Recuperado da Planilha ✓");
+            updateCloudAuthUI(currentCloudUser, "Sincronizado da Planilha ✓");
             closeCloudLoginModal();
             closeOnboardingWizard();
             renderActiveWorkout();
             renderModulesTab();
             renderCatalog();
             renderHistoryTab();
-            showToast(`Bem-vindo de volta, ${appState.userName}! Seus treinos foram carregados da Planilha Google!`, "success");
+            showToast(`Bem-vindo de volta, ${appState.userName}! Seus treinos e relatórios foram carregados!`, "success");
             return;
           } else {
+            // O USUÁRIO NÃO EXISTE NA PLANILHA AINDA! Libera uma única vez as etapas de Masculino/Feminino, Peso/Altura e Nível
+            isNewUserSetupFlow = true;
             appState.userName = userName;
             appState.cloudAccountEmail = email;
             appState.cloudAccountKey = vaultKey;
             appState.gasWebAppUrl = gasUrl;
+            appState.onboardingDone = false;
+            appState.levelLocked = false;
             saveState(true);
-            updateCloudAuthUI(currentCloudUser, "Conta Criada na Planilha ✓");
             closeCloudLoginModal();
-
-            if (appState.onboardingDone && appState.levelLocked) {
-              await pushStateToCloud(appState);
-              closeOnboardingWizard();
-              showToast(`Conta de ${userName} criada e sincronizada na Planilha Google!`, "success");
-            } else {
-              goToWizardStep(1);
-              showToast(`Conta de ${userName} criada na Planilha! Escolha agora seu nível inicial.`, "success");
-            }
+            document.getElementById("onboardingWizardModal").classList.remove("hidden");
+            goToWizardStep(1);
+            showToast(`Olá, ${userName}! Como é seu 1º acesso, configure seu treino inicial abaixo (aparecerá só esta vez).`, "success");
             return;
           }
         } catch (err) {
-          console.warn("Erro ao comunicar com Google Planilhas:", err);
+          console.warn("Aviso ao consultar Planilha Google (testando cache local):", err);
         }
       }
 
-      // 2. Fallback: Verifica se este atleta já tem perfil em cache neste aparelho
+      // 2. Fallback: Verifica se este atleta já existe no cache deste aparelho (caso esteja em preview/offline)
       try {
         const cachedRaw = localStorage.getItem(`BALESTRIN_60D_USER_${email}`);
         if (cachedRaw) {
           const cachedState = JSON.parse(cachedRaw);
           if (cachedState.cloudAccountKey && cachedState.cloudAccountKey !== vaultKey) {
-            showToast("PIN incorreto para este e-mail salvo neste aparelho!", "warning");
+            showToast("PIN incorreto para este e-mail!", "warning");
             return;
           }
-          appState = {
-            ...appState,
-            ...cachedState,
-            userName: cachedState.userName || userName,
-            cloudAccountEmail: email,
-            cloudAccountKey: vaultKey,
-            onboardingDone: true
-          };
-          ensurePlanProgressIntegrity();
-          saveState();
-          updateCloudAuthUI(currentCloudUser, "Perfil Recuperado ✓");
-          closeCloudLoginModal();
-          closeOnboardingWizard();
-          renderActiveWorkout();
-          renderModulesTab();
-          renderCatalog();
-          renderHistoryTab();
-          showToast(`Bem-vindo de volta, ${appState.userName}!`, "success");
-          return;
+          if (cachedState.onboardingDone && cachedState.levelLocked) {
+            isNewUserSetupFlow = false;
+            appState = {
+              ...appState,
+              ...cachedState,
+              userName: cachedState.userName || userName,
+              cloudAccountEmail: email,
+              cloudAccountKey: vaultKey,
+              onboardingDone: true,
+              levelLocked: true
+            };
+            ensurePlanProgressIntegrity();
+            saveState();
+            updateCloudAuthUI(currentCloudUser, "Perfil Carregado ✓");
+            closeCloudLoginModal();
+            closeOnboardingWizard();
+            renderActiveWorkout();
+            renderModulesTab();
+            renderCatalog();
+            renderHistoryTab();
+            showToast(`Bem-vindo de volta, ${appState.userName}!`, "success");
+            return;
+          }
         }
       } catch (e) {}
 
+      // Se não existia no cache nem na planilha, abre o passo a passo inicial uma única vez
+      isNewUserSetupFlow = true;
       appState.userName = userName;
       appState.cloudAccountEmail = email;
       appState.cloudAccountKey = vaultKey;
+      appState.onboardingDone = false;
+      appState.levelLocked = false;
       saveState();
-      updateCloudAuthUI(currentCloudUser);
       closeCloudLoginModal();
-      if (!appState.onboardingDone) {
-        goToWizardStep(1);
-      }
-      showToast(`Conta ${userName} (${email}) conectada!`, "success");
+      document.getElementById("onboardingWizardModal").classList.remove("hidden");
+      goToWizardStep(1);
+      showToast(`Primeiro acesso de ${userName}! Escolha seu perfil inicial (aparecerá apenas esta vez).`, "success");
     };
 
     async function initCloudFirebase() {
       const gasUrl = getConfiguredGasUrl();
-      if (gasUrl) {
-        appState.gasWebAppUrl = gasUrl;
-        updateCloudAuthUI(null, appState.cloudAccountEmail ? "Planilha Conectada ✓" : "Planilha Pronta");
-        return;
+      appState.gasWebAppUrl = gasUrl;
+      updateCloudAuthUI(null, appState.cloudAccountEmail ? `Nuvem: ${appState.userName || appState.cloudAccountEmail.split("@")[0]} ✓` : "Aguardando Login");
+
+      // Se o usuário já estava logado neste aparelho, busca silenciosamente a versão mais recente na Planilha Google ao abrir o app!
+      if (gasUrl && appState.cloudAccountEmail && appState.cloudAccountKey && appState.onboardingDone) {
+        try {
+          const resp = await fetch(gasUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "login",
+              email: appState.cloudAccountEmail,
+              userName: appState.userName || "",
+              pinHash: appState.cloudAccountKey,
+              state: appState
+            }),
+            redirect: "follow"
+          });
+          const resJson = await resp.json();
+          if (resJson && resJson.ok && !resJson.isNewUser && resJson.state && resJson.state.onboardingDone) {
+            const cloudTime = resJson.state.updatedAtTimestamp || 0;
+            const localTime = appState.updatedAtTimestamp || 0;
+            if (cloudTime >= localTime) {
+              isApplyingCloudUpdate = true;
+              appState = {
+                ...appState,
+                ...resJson.state,
+                cloudAccountEmail: appState.cloudAccountEmail,
+                cloudAccountKey: appState.cloudAccountKey,
+                onboardingDone: true,
+                levelLocked: true
+              };
+              ensurePlanProgressIntegrity();
+              saveState(true);
+              isApplyingCloudUpdate = false;
+              renderActiveWorkout();
+              renderHistoryTab();
+              updateCloudAuthUI(null, "Sincronizado da Planilha ✓");
+            }
+          }
+        } catch (e) {}
       }
-      updateCloudAuthUI(null, appState.cloudAccountEmail ? `Atleta: ${appState.userName || appState.cloudAccountEmail.split("@")[0]}` : "Conectar Planilha");
     }
 
     /*************************************************************************
      * 17. INICIALIZAÇÃO DO APLICATIVO
      *************************************************************************/
+    // =========================================================================
+    // SUPORTE PWA NATIVO (MANIFEST + SERVICE WORKER + PROMPT DE INSTALAÇÃO)
+    // =========================================================================
+    let deferredPwaPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      const box = document.getElementById("pwaNativePromptBox");
+      if (box) box.classList.remove("hidden");
+    });
+
+    window.openPwaInstallModal = function () {
+      const box = document.getElementById("pwaNativePromptBox");
+      if (box) {
+        if (deferredPwaPrompt) box.classList.remove("hidden");
+        else box.classList.add("hidden");
+      }
+      document.getElementById("pwaInstallModal").classList.remove("hidden");
+    };
+
+    window.closePwaInstallModal = function () {
+      document.getElementById("pwaInstallModal").classList.add("hidden");
+    };
+
+    window.triggerNativePwaInstall = async function () {
+      if (!deferredPwaPrompt) {
+        showToast("Use o menu do navegador (⋮) > Instalar aplicativo.", "info");
+        return;
+      }
+      deferredPwaPrompt.prompt();
+      const choice = await deferredPwaPrompt.userChoice;
+      if (choice && choice.outcome === "accepted") {
+        showToast("Aplicativo instalado na tela inicial com sucesso!", "success");
+        closePwaInstallModal();
+      }
+      deferredPwaPrompt = null;
+    };
+
+    function registerPwaServiceWorker() {
+      try {
+        if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost")) {
+          const swFile = "sw.js";
+          navigator.serviceWorker.register(swFile).catch(() => {});
+        }
+      } catch (e) {}
+    }
+
     window.onload = function () {
+      registerPwaServiceWorker();
       loadState();
       updateSoundUI();
       initCloudFirebase();
@@ -8459,7 +8511,8 @@
       renderCatalog();
       renderHistoryTab();
 
-      if (!appState.onboardingDone) {
+      // Se ainda não estiver logado ou não tiver concluído o cadastro único na planilha, abre na tela de Login (Passo 0)
+      if (!appState.onboardingDone || !appState.cloudAccountEmail) {
         openOnboardingWizard(0);
       }
     };
