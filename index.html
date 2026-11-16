@@ -156,11 +156,12 @@
     @keyframes bioMusclePulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
     .bio-muscle-pulse { animation: bioMusclePulse 2s ease-in-out infinite; }
   </style>
+  <style id="dynamicUserThemeStyles"></style>
 </head>
 <body class="min-h-screen flex flex-col pb-32 selection:bg-neonGreen selection:text-bgMain">
 
   <!-- TOP HEADER FIXO -->
-  <header class="sticky top-0 z-30 bg-bgMain/95 backdrop-blur-md border-b border-borderSubtle px-3 sm:px-6 py-2.5">
+  <header class="bg-bgMain/95 border-b border-borderSubtle px-3 sm:px-6 py-2.5">
     <div class="max-w-5xl mx-auto flex flex-col gap-2">
       <!-- Top Bar: Brand + Quick Controls (100% visível no Mobile) -->
       <div class="flex flex-wrap items-center justify-between gap-2">
@@ -574,6 +575,21 @@
          ABA 1: TREINAR (EXECUÇÃO DO TREINO ATIVO)
          ========================================== -->
     <section id="tab-workout" class="space-y-4">
+      <!-- CARD COMPACTO EXPANSÍVEL: AGENDA, CÁRDIO & PROGRESSO DA FICHA (FECHADO POR PADRÃO P/ IR DIRETO AO TREINO) -->
+      <details id="workoutMetaAccordion" class="bg-bgCard border border-borderSubtle rounded-2xl shadow-md overflow-hidden group">
+        <summary class="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-2 select-none hover:bg-bgCardHover transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-8 h-8 rounded-xl bg-neonGreen/15 border border-neonGreen/30 text-neonGreen flex items-center justify-center shrink-0">
+              <i class="ph-fill ph-calendar-check text-base"></i>
+            </span>
+            <div class="min-w-0">
+              <strong class="text-xs sm:text-sm font-display font-bold text-white block truncate">Ver agenda, cárdio e progresso da ficha</strong>
+              <span id="metaAccordionMiniSummary" class="text-[11px] text-slate-400 block truncate">Toque para abrir sua semana, medidas e evolução</span>
+            </div>
+          </div>
+          <i class="ph-bold ph-caret-down text-slate-400 group-open:rotate-180 transition-transform shrink-0"></i>
+        </summary>
+        <div class="p-3 sm:p-4 pt-1 space-y-4 border-t border-borderSubtle/60">
       <!-- Barra Resumo do Atleta + Status da Sincronização em Nuvem -->
       <div id="athleteQuickSummaryBar" class="bg-bgCard/90 border border-borderSubtle rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -694,6 +710,10 @@
         </div>
       </div>
 
+
+        </div>
+      </details>
+
       <!-- =========================================================
            RELATÓRIO DO TREINO CONCLUÍDO HOJE (Aparece quando já malhou hoje)
            ========================================================= -->
@@ -703,6 +723,19 @@
 
       <!-- CONTAINER DE EXECUÇÃO DO TREINO DO DIA (Ocultado automaticamente quando já malhou hoje) -->
       <div id="activeWorkoutExecutionWrapper" class="space-y-4">
+        <!-- Banner Somente Leitura ao Espiar Próxima Ficha (impede 2 treinos no mesmo dia) -->
+        <div id="readOnlyPreviewBanner" class="hidden bg-neonAmber/15 border-2 border-neonAmber/50 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div class="flex items-start gap-2.5">
+            <i class="ph-fill ph-eye text-neonAmber text-xl shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="text-xs sm:text-sm text-white block">Modo Visualização (Somente Leitura)</strong>
+              <span class="text-[11px] text-amber-100/90">Você já concluiu seu treino de hoje! Pode espiar os exercícios abaixo, mas o registro do próximo treino só será liberado amanhã.</span>
+            </div>
+          </div>
+          <button onclick="lockTodayPreview()" class="px-3.5 py-2 rounded-xl bg-neonAmber text-bgMain font-display font-bold text-xs uppercase shrink-0">
+            Voltar ao Relatório de Hoje
+          </button>
+        </div>
         <!-- Resumo da Ficha e Progresso do Dia -->
         <div class="bg-bgCard border border-borderSubtle rounded-2xl p-4 shadow-lg">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -756,7 +789,7 @@
         </div>
 
         <!-- Card Finalizar Treino do Dia -->
-        <div class="bg-gradient-to-r from-bgCard via-bgCard to-emerald-950/40 border border-neonGreen/40 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+        <div id="finishWorkoutActionCard" class="bg-gradient-to-r from-bgCard via-bgCard to-emerald-950/40 border border-neonGreen/40 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
           <div class="text-center sm:text-left">
             <h3 class="text-base sm:text-lg font-bold text-white flex items-center justify-center sm:justify-start gap-2">
               <i class="ph-fill ph-check-circle text-neonGreen text-xl"></i>
@@ -1489,6 +1522,118 @@
             Salvar Medidas na Planilha
           </button>
         </div>
+
+        <!-- Personalização Completa de Cores e Estilo do Site (Salvo por Usuário na Planilha) -->
+        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-3.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold uppercase text-neonAmber flex items-center gap-1.5">
+              <i class="ph-fill ph-palette text-sm"></i> Aparência &amp; Estilo do Site
+            </span>
+            <button type="button" onclick="resetUserThemeDefaults()" class="text-[10px] text-slate-400 hover:text-white underline">
+              Restaurar Padrão
+            </button>
+          </div>
+
+          <!-- Temas Prontos em 1 Clique -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-bold uppercase text-slate-400 block">Temas Prontos (1 toque):</label>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button type="button" onclick="applyThemePreset('classic_dark')" class="px-2.5 py-2 rounded-xl bg-bgMain border border-borderSubtle hover:border-neonGreen text-[11px] font-bold text-left flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full shrink-0" style="background:#10B981"></span>
+                <span>Escuro Pro</span>
+              </button>
+              <button type="button" onclick="applyThemePreset('clean_light')" class="px-2.5 py-2 rounded-xl bg-bgMain border border-borderSubtle hover:border-neonCyan text-[11px] font-bold text-left flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full shrink-0 border border-slate-400" style="background:#F8FAFC"></span>
+                <span>Claro Clean</span>
+              </button>
+              <button type="button" onclick="applyThemePreset('pink_light')" class="px-2.5 py-2 rounded-xl bg-bgMain border border-borderSubtle hover:border-pink-500 text-[11px] font-bold text-left flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full shrink-0" style="background:#EC4899"></span>
+                <span>Claro Rosa</span>
+              </button>
+              <button type="button" onclick="applyThemePreset('amoled_blue')" class="px-2.5 py-2 rounded-xl bg-bgMain border border-borderSubtle hover:border-blue-500 text-[11px] font-bold text-left flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full shrink-0" style="background:#3B82F6"></span>
+                <span>AMOLED Azul</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cor Principal (Botões, Destaques, Realces Verdes) -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-bold uppercase text-slate-400 block">Cor Principal (Realces &amp; Botões):</label>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="setUserThemeOption('accentColor', '#10B981')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#10B981" title="Verde Neon"></button>
+              <button type="button" onclick="setUserThemeOption('accentColor', '#3B82F6')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#3B82F6" title="Azul Elétrico"></button>
+              <button type="button" onclick="setUserThemeOption('accentColor', '#EC4899')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#EC4899" title="Rosa Fitness"></button>
+              <button type="button" onclick="setUserThemeOption('accentColor', '#8B5CF6')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#8B5CF6" title="Roxo Violeta"></button>
+              <button type="button" onclick="setUserThemeOption('accentColor', '#F59E0B')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#F59E0B" title="Laranja"></button>
+              <button type="button" onclick="setUserThemeOption('accentColor', '#EF4444')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#EF4444" title="Vermelho"></button>
+              <label class="flex items-center gap-1 px-2 py-1 rounded-lg bg-bgMain border border-borderSubtle cursor-pointer text-[10px] text-slate-300">
+                <input type="color" id="themeCustomColorPicker" value="#10B981" oninput="setUserThemeOption('accentColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+                <span>Livre</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Cor Secundária (Botões de Execução, Ícones Ciano) -->
+          <div class="space-y-1.5">
+            <label class="text-[10px] font-bold uppercase text-slate-400 block">Cor Secundária (Execução, Relatório &amp; Detalhes):</label>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="setUserThemeOption('secondaryColor', '#06B6D4')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#06B6D4" title="Ciano"></button>
+              <button type="button" onclick="setUserThemeOption('secondaryColor', '#3B82F6')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#3B82F6" title="Azul"></button>
+              <button type="button" onclick="setUserThemeOption('secondaryColor', '#8B5CF6')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#8B5CF6" title="Roxo"></button>
+              <button type="button" onclick="setUserThemeOption('secondaryColor', '#F43F5E')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#F43F5E" title="Rosa Coral"></button>
+              <button type="button" onclick="setUserThemeOption('secondaryColor', '#F59E0B')" class="w-6 h-6 rounded-full border-2 border-white/20 hover:scale-110 transition" style="background:#F59E0B" title="Âmbar"></button>
+              <label class="flex items-center gap-1 px-2 py-1 rounded-lg bg-bgMain border border-borderSubtle cursor-pointer text-[10px] text-slate-300">
+                <input type="color" id="themeSecondaryColorPicker" value="#06B6D4" oninput="setUserThemeOption('secondaryColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+                <span>Livre</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Fundo do App & Cor dos Cards de Exercício -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Fundo da Página:</label>
+              <select id="themeBgStyleSelect" onchange="setUserThemeOption('bgStyle', this.value)" class="w-full bg-bgMain border border-borderSubtle rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
+                <option value="dark">Escuro Padrão</option>
+                <option value="amoled">Preto AMOLED</option>
+                <option value="slate">Grafite Suave</option>
+                <option value="light">Modo Claro (Branco)</option>
+                <option value="cream">Modo Claro (Creme)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Cor dos Cards / Exercícios:</label>
+              <select id="themeCardStyleSelect" onchange="setUserThemeOption('cardStyle', this.value)" class="w-full bg-bgMain border border-borderSubtle rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
+                <option value="auto">Automático (Padrão do Fundo)</option>
+                <option value="white">Branco Puro</option>
+                <option value="soft_gray">Cinza Claro Suave</option>
+                <option value="navy">Azul Marinho Escuro</option>
+                <option value="charcoal">Grafite Escuro</option>
+                <option value="black">Preto Puro</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Estilo dos Cantos & Tamanho da Fonte -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Cantos dos Cards:</label>
+              <select id="themeRadiusStyleSelect" onchange="setUserThemeOption('radiusStyle', this.value)" class="w-full bg-bgMain border border-borderSubtle rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
+                <option value="rounded">Moderno</option>
+                <option value="pill">Bem Arredondado</option>
+                <option value="sharp">Esportivo Reto</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Tamanho da Fonte:</label>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" onclick="setUserThemeOption('fontScale', 'normal')" id="themeFontNormalBtn" class="py-2 rounded-xl border border-neonGreen bg-neonGreen/15 text-neonGreen text-[11px] font-bold">Normal</button>
+                <button type="button" onclick="setUserThemeOption('fontScale', 'large')" id="themeFontLargeBtn" class="py-2 rounded-xl border border-borderSubtle bg-bgMain text-slate-300 text-[11px] font-bold">Grande</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- FORMULÁRIO DE LOGIN / ENTRAR COM OUTRO USUÁRIO -->
@@ -1899,7 +2044,7 @@
       "Remada Baixa Barra Reta Pronada Aberta": "https://www.youtube.com/watch?v=YiBlwb32gqo",
       "Levantamento Terra": "https://www.youtube.com/watch?v=aNRacCyGzLA",
       "Levantamento Terra na Polia": "https://www.youtube.com/watch?v=aNRacCyGzLA",
-      "Hiperextensão Lombar": "https://www.youtube.com/watch?v=aNRacCyGzLA",
+      "Hiperextensão Lombar": "https://www.youtube.com/watch?v=ds9aX5XGBa0",
 
       // Peitoral (10 a 14 + variações das fichas)
       "Supino Inclinado": "https://www.youtube.com/watch?v=ExhidCbJRrI",
@@ -2392,9 +2537,9 @@
       "Crucifixo Máquina": [11, 10, 14],
       "Crucifixo Inclinado c/ Halter": [10, 12, 11],
       "Crucifixo Inclinado Cabo": [10, 12, 11],
-      "Pulôver": [3, 14, 13],
+      "Pulôver": [14, 13, 11, 10],
       "Crossover": [11, 10, 13],
-      "Paralelas": [13, 11, 23, 26],
+      "Paralelas": [13, 11, 14, 10],
       // Costas
       "Pulldown c/ Corda": [3, 1, 9],
       "Puxador Alto Aberto Pronado": [1, 9, 3],
@@ -2407,24 +2552,24 @@
       "Remada Unilateral c/ Halter": [4, 5, 6, 2],
       "Remada Baixa c/ Triângulo": [6, 5, 48, 2],
       "Remada Baixa Barra Reta Pronada Aberta": [6, 2, 48, 8],
-      "Hiperextensão Lombar": [35, 46, 34, 50],
+      "Hiperextensão Lombar": [35, 2, 6, 48],
       // Ombros / Trapézio
       "Desenvolvimento Sentado c/ Halter": [28, 30, 12],
-      "Desenvolvimento c/ Halteres": [12, 28, 30],
+      "Desenvolvimento c/ Halteres": [28, 30, 7, 8],
       "Desenvolvimento Sentado 90º c/ Halter": [28, 30, 7],
       "Desenvolvimento Arnold Press": [28, 30, 7],
       "Elevação Lateral c/ Halter": [30, 7, 28],
       "Elevação Frontal c/ Halter": [28, 30, 7],
       "Elevação Frontal c/ Barra Pronada": [28, 30, 7],
-      "Crucifixo Banco Inverso": [27, 8, 6],
-      "Crucifixo Máquina Inverso": [27, 8, 6],
+      "Crucifixo Banco Inverso": [27, 8, 30, 7],
+      "Crucifixo Máquina Inverso": [27, 8, 30, 7],
       "Encolhimento c/ Halter": [29, 7, 35],
       // Bíceps / Tríceps / Antebraço
       "Rosca Direta c/ Barra W": [22, 19, 18, 20],
       "Rosca Alternada c/ Halter": [19, 20, 22, 16],
       "Rosca Scott Máquina": [49, 18, 19, 22],
-      "Rosca Scott Máquina + Tríceps Pulley Barra W": [49, 18, 23, 26],
-      "Rosca Alternada c/ Isometria + Tríceps Francês Sentado": [19, 20, 25, 24],
+      "Rosca Scott Máquina + Tríceps Pulley Barra W": [49, 18, 22, 19],
+      "Rosca Alternada c/ Isometria + Tríceps Francês Sentado": [19, 20, 22, 16],
       "Rosca Alternada em Pé c/ Isometria": [19, 22, 20, 21],
       "Rosca Cabo Corda em Pé": [20, 19, 21, 22],
       "Rosca Concentrada": [16, 47, 21, 18],
@@ -3955,6 +4100,217 @@
     }
 
     // Carregar estado do LocalStorage
+
+    // =========================================================================
+    // MOTOR DE APARÊNCIA & ESTILO PERSONALIZÁVEL (SALVO POR USUÁRIO NA PLANILHA)
+    // =========================================================================
+    function getDefaultUserTheme() {
+      return {
+        accentColor: "#10B981",
+        secondaryColor: "#06B6D4",
+        bgStyle: "dark",
+        cardStyle: "auto",
+        radiusStyle: "rounded",
+        fontScale: "normal"
+      };
+    }
+
+    function applyThemePreset(presetKey) {
+      const presets = {
+        classic_dark: { accentColor: "#10B981", secondaryColor: "#06B6D4", bgStyle: "dark", cardStyle: "auto", radiusStyle: "rounded" },
+        clean_light:  { accentColor: "#2563EB", secondaryColor: "#0EA5E9", bgStyle: "light", cardStyle: "white", radiusStyle: "rounded" },
+        pink_light:   { accentColor: "#EC4899", secondaryColor: "#8B5CF6", bgStyle: "light", cardStyle: "white", radiusStyle: "pill" },
+        amoled_blue:  { accentColor: "#3B82F6", secondaryColor: "#06B6D4", bgStyle: "amoled", cardStyle: "black", radiusStyle: "rounded" }
+      };
+      const p = presets[presetKey];
+      if (!p) return;
+      appState.userTheme = { ...getDefaultUserTheme(), ...(appState.userTheme || {}), ...p };
+      applyUserTheme();
+      saveState();
+      showToast("Tema aplicado e salvo na sua conta!", "success");
+    }
+
+    function applyUserTheme() {
+      if (!appState.userTheme) appState.userTheme = getDefaultUserTheme();
+      const t = { ...getDefaultUserTheme(), ...appState.userTheme };
+      let styleEl = document.getElementById("dynamicUserThemeStyles");
+      if (!styleEl) {
+        styleEl = document.createElement("style");
+        styleEl.id = "dynamicUserThemeStyles";
+      }
+      if (document.body && styleEl.parentNode !== document.body) {
+        document.body.appendChild(styleEl);
+      }
+
+      const accent = t.accentColor || "#10B981";
+      const secondary = t.secondaryColor || "#06B6D4";
+
+      let bgMain = "#0B0F17";
+      let bgCard = "#151C28";
+      let bgInput = "#0E131D";
+      let borderCol = "#232F42";
+      let isLightSurface = false;
+
+      if (t.bgStyle === "amoled") {
+        bgMain = "#000000"; bgCard = "#0D1117"; bgInput = "#06080C"; borderCol = "#1F2937";
+      } else if (t.bgStyle === "slate") {
+        bgMain = "#111827"; bgCard = "#1F2937"; bgInput = "#0F172A"; borderCol = "#374151";
+      } else if (t.bgStyle === "light") {
+        bgMain = "#F1F5F9"; bgCard = "#FFFFFF"; bgInput = "#F8FAFC"; borderCol = "#CBD5E1"; isLightSurface = true;
+      } else if (t.bgStyle === "cream") {
+        bgMain = "#FAF7F2"; bgCard = "#FFFFFF"; bgInput = "#F3EFE8"; borderCol = "#E2D9C8"; isLightSurface = true;
+      }
+
+      if (t.cardStyle === "white") {
+        bgCard = "#FFFFFF"; bgInput = "#F1F5F9"; borderCol = "#CBD5E1"; isLightSurface = true;
+      } else if (t.cardStyle === "soft_gray") {
+        bgCard = "#E2E8F0"; bgInput = "#F8FAFC"; borderCol = "#CBD5E1"; isLightSurface = true;
+      } else if (t.cardStyle === "navy") {
+        bgCard = "#151C28"; bgInput = "#0E131D"; borderCol = "#232F42"; isLightSurface = false;
+      } else if (t.cardStyle === "charcoal") {
+        bgCard = "#1F2937"; bgInput = "#111827"; borderCol = "#374151"; isLightSurface = false;
+      } else if (t.cardStyle === "black") {
+        bgCard = "#0B0D12"; bgInput = "#050608"; borderCol = "#1F2937"; isLightSurface = false;
+      }
+
+      const radiusCard = t.radiusStyle === "pill" ? "1.65rem" : t.radiusStyle === "sharp" ? "0.45rem" : "1rem";
+      const radiusBtn = t.radiusStyle === "pill" ? "1.15rem" : t.radiusStyle === "sharp" ? "0.35rem" : "0.75rem";
+      const fontScaleCss = t.fontScale === "large" ? "html { font-size: 17.5px !important; }" : "";
+
+      const pageIsLight = (t.bgStyle === "light" || t.bgStyle === "cream");
+
+      const lightPageCss = pageIsLight ? `
+        body, header, nav { background-color: ${bgMain} !important; color: #0F172A !important; }
+        header h1, header p { color: #0F172A !important; }
+      ` : "";
+
+      const cardSurfaceCss = isLightSurface ? `
+        .bg-bgCard, [class*="bg-bgCard"], [class*="bg-[#181B24]"] {
+          background-color: ${bgCard} !important;
+          background-image: none !important;
+          border-color: ${borderCol} !important;
+          color: #0F172A !important;
+          box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06) !important;
+        }
+        .bg-bgInput, [class*="bg-bgInput"], [class*="bg-[#202430]"], [class*="bg-[#252A38]"] {
+          background-color: ${bgInput} !important;
+          border-color: ${borderCol} !important;
+          color: #0F172A !important;
+        }
+        .bg-bgMain, [class*="bg-bgMain"], [class*="bg-[#0B0F17]"] {
+          background-color: ${bgMain} !important;
+          border-color: ${borderCol} !important;
+          color: #0F172A !important;
+        }
+        .bg-slate-800, .bg-slate-900, .bg-slate-950 {
+          background-color: #E2E8F0 !important;
+          color: #0F172A !important;
+        }
+        [class*="bg-emerald-950"] {
+          background-color: ${accent}1F !important;
+          border-color: ${accent}66 !important;
+        }
+        .text-white, .text-slate-100, .text-slate-200 { color: #0F172A !important; }
+        .text-slate-300, .text-slate-400, .text-slate-500 { color: #475569 !important; }
+        input, select, textarea {
+          color: #0F172A !important;
+          background-color: #FFFFFF !important;
+          border-color: ${borderCol} !important;
+        }
+      ` : `
+        .bg-bgCard, [class*="bg-bgCard"] {
+          background-color: ${bgCard} !important;
+          border-color: ${borderCol} !important;
+        }
+        .bg-bgInput, [class*="bg-bgInput"] {
+          background-color: ${bgInput} !important;
+          border-color: ${borderCol} !important;
+        }
+        .bg-bgMain, [class*="bg-bgMain"] {
+          background-color: ${bgMain} !important;
+        }
+      `;
+
+      styleEl.textContent = `
+        ${fontScaleCss}
+        body { background-color: ${bgMain} !important; }
+        .border-borderSubtle { border-color: ${borderCol} !important; }
+        ${lightPageCss}
+        ${cardSurfaceCss}
+
+        /* Cor Principal (substitui 100% do verde de realce em botões, badges, barra e textos) */
+        .text-neonGreen, [class*="text-neonGreen"] { color: ${accent} !important; }
+        .bg-neonGreen, .bg-neonGreenDark { background-color: ${accent} !important; color: #FFFFFF !important; }
+        button.bg-neonGreen, a.bg-neonGreen { color: #FFFFFF !important; }
+        .bg-neonGreen * { color: #FFFFFF !important; }
+        [class*="bg-neonGreen/"] { background-color: ${accent}24 !important; }
+        [class*="border-neonGreen"] { border-color: ${accent} !important; }
+        .from-neonGreen.to-emerald-700, .from-neonGreen.to-emerald-400, .from-neonGreen.to-neonCyan {
+          background-image: linear-gradient(135deg, ${accent}, ${secondary}) !important;
+        }
+        .bg-clip-text.from-neonGreen {
+          background-image: linear-gradient(to right, ${accent}, ${secondary}) !important;
+          -webkit-background-clip: text !important;
+          color: transparent !important;
+        }
+
+        /* Cor Secundária (botões de Execução, Relatório e destaques Ciano) */
+        .text-neonCyan, [class*="text-neonCyan"] { color: ${secondary} !important; }
+        .bg-neonCyan { background-color: ${secondary} !important; color: #FFFFFF !important; }
+        [class*="bg-neonCyan/"] { background-color: ${secondary}24 !important; }
+        [class*="border-neonCyan"] { border-color: ${secondary} !important; }
+
+        /* Bordas arredondadas */
+        .rounded-2xl, .rounded-3xl { border-radius: ${radiusCard} !important; }
+        .rounded-xl { border-radius: ${radiusBtn} !important; }
+      `;
+
+      const picker = document.getElementById("themeCustomColorPicker");
+      const secPicker = document.getElementById("themeSecondaryColorPicker");
+      const bgSel = document.getElementById("themeBgStyleSelect");
+      const cardSel = document.getElementById("themeCardStyleSelect");
+      const radSel = document.getElementById("themeRadiusStyleSelect");
+      const fnNorm = document.getElementById("themeFontNormalBtn");
+      const fnLarge = document.getElementById("themeFontLargeBtn");
+      if (picker) picker.value = accent;
+      if (secPicker) secPicker.value = secondary;
+      if (bgSel) bgSel.value = t.bgStyle;
+      if (cardSel) cardSel.value = t.cardStyle || "auto";
+      if (radSel) radSel.value = t.radiusStyle;
+      if (fnNorm && fnLarge) {
+        if (t.fontScale === "large") {
+          fnLarge.className = "py-2 rounded-xl border border-neonGreen bg-neonGreen/15 text-neonGreen text-[11px] font-bold";
+          fnNorm.className = "py-2 rounded-xl border border-borderSubtle bg-bgMain text-slate-300 text-[11px] font-bold";
+        } else {
+          fnNorm.className = "py-2 rounded-xl border border-neonGreen bg-neonGreen/15 text-neonGreen text-[11px] font-bold";
+          fnLarge.className = "py-2 rounded-xl border border-borderSubtle bg-bgMain text-slate-300 text-[11px] font-bold";
+        }
+      }
+    }
+
+    function setUserThemeAccent(hexColor) {
+      if (!appState.userTheme) appState.userTheme = getDefaultUserTheme();
+      appState.userTheme.accentColor = hexColor;
+      applyUserTheme();
+      saveState();
+      showToast("Cor do aplicativo atualizada e salva!", "success");
+    }
+
+    function setUserThemeOption(key, value) {
+      if (!appState.userTheme) appState.userTheme = getDefaultUserTheme();
+      appState.userTheme[key] = value;
+      applyUserTheme();
+      saveState();
+      showToast("Estilo salvo na sua conta!", "success");
+    }
+
+    function resetUserThemeDefaults() {
+      appState.userTheme = getDefaultUserTheme();
+      applyUserTheme();
+      saveState();
+      showToast("Visual padrão restaurado!", "info");
+    }
+
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -3963,6 +4319,7 @@
           appState = { ...appState, ...parsed };
         }
         ensurePlanProgressIntegrity();
+        if (typeof applyUserTheme === 'function') applyUserTheme();
       } catch (err) {
         console.error("Erro ao carregar LocalStorage:", err);
       }
@@ -4032,6 +4389,7 @@
     function toggleSound() {
       appState.soundEnabled = !appState.soundEnabled;
       saveState();
+      if (typeof applyUserTheme === 'function') applyUserTheme();
       updateSoundUI();
       showToast(appState.soundEnabled ? "Alerta sonoro do timer ativado!" : "Alerta sonoro silenciado.", "info");
     }
@@ -4101,8 +4459,15 @@
       return EXERCISES_50.find(e => e.id === Number(id)) || null;
     }
 
+    function getSubstitutionPrefKey(originalName, muscleGroup) {
+      return `${normalizeStr(originalName)}__${normalizeStr(muscleGroup || "")}`;
+    }
+
     function getEffectiveExerciseForSlot(slotObj) {
-      const subId = appState.substitutions[slotObj.slotId];
+      if (!appState.substitutions) appState.substitutions = {};
+      if (!appState.substitutionPreferences) appState.substitutionPreferences = {};
+      const prefKey = getSubstitutionPrefKey(slotObj.name, slotObj.muscle);
+      const subId = appState.substitutions[slotObj.slotId] || appState.substitutionPreferences[prefKey];
       if (subId) {
         const subEx = getExercise50ById(subId);
         if (subEx) {
@@ -4581,6 +4946,17 @@
       document.getElementById("currentDayBadge").textContent = `${plan.level} • ${shortDayName}`;
       document.getElementById("currentDayTitle").textContent = shortDayName;
       document.getElementById("currentDayNotes").textContent = day.notes;
+      const isReadOnlyToday = isTodayWorkoutAlreadyCompleted() && appState.reviewTodayAnyway;
+      const roBanner = document.getElementById("readOnlyPreviewBanner");
+      const finishCard = document.getElementById("finishWorkoutActionCard");
+      if (roBanner) roBanner.classList.toggle("hidden", !isReadOnlyToday);
+      if (finishCard) finishCard.classList.toggle("hidden", isReadOnlyToday);
+      const miniSummary = document.getElementById("metaAccordionMiniSummary");
+      if (miniSummary) {
+        const doneS = appState.planProgress[plan.id]?.completedSessions || 0;
+        const reqS = getProgressionRule(plan.id).requiredSessions;
+        miniSummary.textContent = `${doneS}/${reqS} treinos na ficha • Toque para ver agenda e medidas`;
+      }
 
       // Renderiza os Cards de Cárdio Pré-Treino (Aquecimento 5 min) e Pós-Treino (30/45/60 min)
       renderCardioCards(plan, day);
@@ -5102,6 +5478,10 @@
     }
 
     function toggleCardioCheck(cardioSlotKey) {
+      if (isTodayWorkoutAlreadyCompleted()) {
+        showToast("Você já concluiu o treino de hoje! Volte amanhã para o próximo treino.", "warning");
+        return;
+      }
       if (!appState.activeSessionLogs[cardioSlotKey]) {
         appState.activeSessionLogs[cardioSlotKey] = [{ done: false }];
       }
@@ -5162,6 +5542,10 @@
     }
 
     function toggleSetCheck(slotId, setIndex, restSeconds, cleanExerciseName) {
+      if (isTodayWorkoutAlreadyCompleted()) {
+        showToast("Você já concluiu o treino de hoje! Volte amanhã para registrar a próxima sessão.", "warning");
+        return;
+      }
       if (!appState.activeSessionLogs[slotId]) return;
       const setItem = appState.activeSessionLogs[slotId][setIndex];
       setItem.done = !setItem.done;
@@ -5183,10 +5567,20 @@
       renderActiveWorkout();
     }
 
+    function isTodayWorkoutAlreadyCompleted() {
+      const todayIso = toLocalIsoDate(new Date());
+      return (appState.completedWorkouts || []).some(w => w.isoDate === todayIso);
+    }
+
     function unlockNextDayPreview() {
       appState.reviewTodayAnyway = true;
       renderActiveWorkout();
-      showToast("Exibindo visualização da próxima ficha.", "info");
+      showToast("Modo somente leitura: você já treinou hoje.", "info");
+    }
+
+    function lockTodayPreview() {
+      appState.reviewTodayAnyway = false;
+      renderActiveWorkout();
     }
 
     // =========================================================================
@@ -5287,6 +5681,10 @@
     }
 
     function completeAllSetsForSlot(slotId, restSeconds, cleanExerciseName) {
+      if (isTodayWorkoutAlreadyCompleted()) {
+        showToast("Você já concluiu o treino de hoje! Volte amanhã para registrar a próxima sessão.", "warning");
+        return;
+      }
       const logs = appState.activeSessionLogs[slotId];
       if (!logs || logs.length === 0) return;
       const allDone = logs.every(s => s.done);
@@ -5478,21 +5876,23 @@
 
       // Verifica se já está substituído para mostrar botão de restaurar original
       const restoreBox = document.getElementById("restoreOriginalContainer");
-      if (appState.substitutions[slotId]) {
+      if (appState.substitutions[slotId] || (appState.substitutionPreferences && appState.substitutionPreferences[getSubstitutionPrefKey(originalName, muscleGroup)])) {
         restoreBox.classList.remove("hidden");
         document.getElementById("restoreOriginalLabel").textContent = originalName;
       } else {
         restoreBox.classList.add("hidden");
       }
 
-      // 1. Monta Sugestões Biomecânicas Diretas
-      let recommendedIds = SMART_SUBSTITUTIONS[originalName] || [];
-      if (recommendedIds.length === 0) {
-        // Fallback: sugere exercícios do mesmo grupo muscular priorizando Polia e Halteres
-        recommendedIds = EXERCISES_50
-          .filter(e => e.muscle === muscleGroup)
-          .slice(0, 4)
+      // 1. Monta Sugestões Biomecânicas Diretas (ESTRITAMENTE do mesmo grupo muscular!)
+      let recommendedIds = (SMART_SUBSTITUTIONS[originalName] || []).filter(id => {
+        const ex = getExercise50ById(id);
+        return ex && (!muscleGroup || ex.muscle === muscleGroup);
+      });
+      if (recommendedIds.length < 4) {
+        const extraIds = EXERCISES_50
+          .filter(e => (!muscleGroup || e.muscle === muscleGroup) && !recommendedIds.includes(e.id))
           .map(e => e.id);
+        recommendedIds = [...recommendedIds, ...extraIds].slice(0, 4);
       }
 
       const recContainer = document.getElementById("swapRecommendedList");
@@ -5590,7 +5990,20 @@
 
     function selectSubstitution(exercise50Id) {
       if (!currentSwapSlotId) return;
+      if (!appState.substitutions) appState.substitutions = {};
+      if (!appState.substitutionPreferences) appState.substitutionPreferences = {};
       appState.substitutions[currentSwapSlotId] = Number(exercise50Id);
+
+      // Salva também para as próximas vezes que a pessoa for treinar este mesmo exercício/grupo muscular
+      const day = getActiveDay();
+      const slotMeta = day && day.exercises ? day.exercises.find(e => e.slotId === currentSwapSlotId) : null;
+      const origName = currentSwapOriginalName || (slotMeta ? slotMeta.name : "");
+      const origMuscle = slotMeta ? slotMeta.muscle : "";
+      if (origName) {
+        const prefKey = getSubstitutionPrefKey(origName, origMuscle);
+        appState.substitutionPreferences[prefKey] = Number(exercise50Id);
+      }
+
       const chosen = getExercise50ById(exercise50Id);
 
       // Se houver histórico de carga do novo exercício escolhido, carrega como sugestão nas séries não concluídas
@@ -5613,7 +6026,14 @@
 
     function restoreOriginalExercise() {
       if (!currentSwapSlotId) return;
-      delete appState.substitutions[currentSwapSlotId];
+      if (appState.substitutions) delete appState.substitutions[currentSwapSlotId];
+      const day = getActiveDay();
+      const slotMeta = day && day.exercises ? day.exercises.find(e => e.slotId === currentSwapSlotId) : null;
+      const origName = currentSwapOriginalName || (slotMeta ? slotMeta.name : "");
+      const origMuscle = slotMeta ? slotMeta.muscle : "";
+      if (origName && appState.substitutionPreferences) {
+        delete appState.substitutionPreferences[getSubstitutionPrefKey(origName, origMuscle)];
+      }
       saveState();
       closeSwapModal();
       renderActiveWorkout();
@@ -5629,6 +6049,12 @@
      * 10. FINALIZAR TREINO DO DIA E EVOLUÇÃO AUTOMÁTICA DE FICHA
      *************************************************************************/
     function finishWorkoutSession() {
+      if (isTodayWorkoutAlreadyCompleted()) {
+        showToast("Você já registrou um treino hoje! Não é permitido fazer 2 treinos no mesmo dia.", "warning");
+        appState.reviewTodayAnyway = false;
+        renderActiveWorkout();
+        return;
+      }
       ensurePlanProgressIntegrity();
       const plan = getActivePlan();
       const day = getActiveDay();
@@ -8810,6 +9236,7 @@
       if (hQuick) hQuick.value = appState.userHeight || "";
       if (gQuick) gQuick.value = appState.userGoal || "Definição";
 
+      if (typeof applyUserTheme === 'function') applyUserTheme();
       updateCloudAuthUI(currentCloudUser);
       document.getElementById("cloudLoginModal").classList.remove("hidden");
     };
