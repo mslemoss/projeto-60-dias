@@ -550,6 +550,24 @@
         <!-- Resumo da Ficha de Entrada e Próximos Passos da Trilha -->
         <div class="space-y-2">
           <label class="text-xs font-bold text-slate-300 uppercase block">Ficha Inicial &amp; Escolha por Qual Treino Começar Hoje:</label>
+          <!-- Escolha dos Dias da Semana para o Nível Selecionado -->
+          <div id="wizardWeekdaysSelectorBox" class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-bold uppercase text-neonCyan block">Seus Dias de Treino na Semana</span>
+                <p id="wizardWeekdaysHint" class="text-[11px] text-slate-300 mt-0.5 leading-snug">
+                  Para o nível Adaptação você vai precisar de 4 dias na semana (ex: 2 seguidos, descansa 1, 2 seguidos, descansa 2). Quais serão esses dias?
+                </p>
+              </div>
+              <span id="wizardWeekdaysCountBadge" class="px-2 py-0.5 rounded-lg bg-neonGreen/15 border border-neonGreen/40 text-neonGreen text-[10px] font-bold shrink-0">
+                4/4 dias
+              </span>
+            </div>
+            <div id="wizardWeekdaysButtons" class="grid grid-cols-7 gap-1.5">
+              <!-- Populado via JS -->
+            </div>
+          </div>
+
           <div id="wizardPlansList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
             <!-- Populado via JS -->
           </div>
@@ -1524,6 +1542,24 @@
         </div>
 
         <!-- Personalização Completa de Cores e Estilo do Site (Salvo por Usuário na Planilha) -->
+        <!-- Meus Dias de Treino na Semana (Opcional, sem impactar quem já usa o app) -->
+        <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-2.5">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase text-neonCyan flex items-center gap-1.5">
+                <i class="ph-fill ph-calendar-blank text-sm"></i> Meus Dias de Treino na Semana
+              </span>
+              <p id="profileWeekdaysHint" class="text-[11px] text-slate-400 mt-0.5 leading-snug">
+                Escolha os dias da semana para o seu nível atual.
+              </p>
+            </div>
+            <span id="profileWeekdaysCountBadge" class="px-2 py-0.5 rounded-lg bg-neonGreen/15 border border-neonGreen/40 text-neonGreen text-[10px] font-bold shrink-0">
+              4/4 dias
+            </span>
+          </div>
+          <div id="profileWeekdaysButtons" class="grid grid-cols-7 gap-1.5"></div>
+        </div>
+
         <div class="bg-bgInput border border-borderSubtle rounded-2xl p-3.5 space-y-3.5">
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold uppercase text-neonAmber flex items-center gap-1.5">
@@ -3921,6 +3957,44 @@
       // Índice do treino atual na ficha
       let nextDayIndex = plan.days.findIndex(d => d.id === appState.activeDayId);
       if (nextDayIndex === -1) nextDayIndex = 0;
+
+      const customWeekdays = (appState.trainingWeekdaysByLevel && Array.isArray(appState.trainingWeekdaysByLevel[plan.level]) && appState.trainingWeekdaysByLevel[plan.level].length > 0)
+        ? appState.trainingWeekdaysByLevel[plan.level]
+        : null;
+
+      if (customWeekdays) {
+        const customSchedule = [];
+        for (let offset = 0; offset < 7; offset++) {
+          const dObj = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
+          const dIso = toLocalIsoDate(dObj);
+          const shortWeek = WEEKDAYS_SHORT_PT[dObj.getDay()];
+          const fullWeek = WEEKDAYS_FULL_PT[dObj.getDay()];
+          const dayNum = String(dObj.getDate()).padStart(2, "0");
+
+          if (offset === 0 && trainedToday) {
+            customSchedule.push({
+              isoDate: dIso, shortWeek, fullWeek, dayNum, isToday: true,
+              status: "done", label: trainedToday.dayLabel || "Feito", title: trainedToday.dayTitle
+            });
+            continue;
+          }
+
+          if (customWeekdays.includes(dObj.getDay())) {
+            const dObjPlan = plan.days[nextDayIndex % plan.days.length];
+            customSchedule.push({
+              isoDate: dIso, shortWeek, fullWeek, dayNum, isToday: offset === 0,
+              status: "train", label: getShortWorkoutName(dObjPlan), title: dObjPlan.title, dayId: dObjPlan.id
+            });
+            nextDayIndex++;
+          } else {
+            customSchedule.push({
+              isoDate: dIso, shortWeek, fullWeek, dayNum, isToday: offset === 0,
+              status: "rest", label: "Descanso", title: "Dia de Descanso"
+            });
+          }
+        }
+        return customSchedule;
+      }
 
       const schedule7Days = [];
       let simStreak = consecutiveTrainDays;
@@ -8073,6 +8147,142 @@
      *************************************************************************/
     let isNewUserSetupFlow = false;
 
+
+    // =========================================================================
+    // DIAS DA SEMANA PERSONALIZADOS POR NÍVEL (100% RETROCOMPATÍVEL)
+    // =========================================================================
+    const WEEKDAY_MINI_LABELS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+    function getLevelScheduleMeta(level, planId) {
+      const rule = planId ? getProgressionRule(planId) : null;
+      const reqDays = rule && rule.sessionsPerWeek ? rule.sessionsPerWeek : (level === "Adaptação" ? 4 : 5);
+      let hint = "";
+      let defaultDays = [1, 2, 4, 5];
+
+      if (level === "Adaptação" || reqDays === 4) {
+        hint = `Para o nível ${level} você vai precisar de 4 dias na semana (ex: treinar 2 dias seguidos, descansar 1, treinar 2 dias seguidos e descansar 2). Quais serão esses dias?`;
+        defaultDays = [1, 2, 4, 5];
+      } else if (reqDays === 5) {
+        hint = `Para o nível ${level} você vai precisar de 5 dias na semana (ex: treinar 3 dias seguidos, descansar 1, treinar 2 dias seguidos e descansar 1). Quais serão esses dias?`;
+        defaultDays = [1, 2, 3, 5, 6];
+      } else if (reqDays >= 6) {
+        hint = `Para o nível ${level} você vai precisar de 6 dias na semana (6 treinos + 1 dia de descanso). Quais serão esses dias?`;
+        defaultDays = [1, 2, 3, 4, 5, 6];
+      } else {
+        hint = `Para o nível ${level} você vai precisar de ${reqDays} dias de treino na semana. Quais serão esses dias?`;
+        defaultDays = [1, 2, 3, 4, 5].slice(0, reqDays);
+      }
+      return { reqDays, hint, defaultDays };
+    }
+
+    function renderWizardWeekdaysSelector() {
+      const box = document.getElementById("wizardWeekdaysButtons");
+      const hintEl = document.getElementById("wizardWeekdaysHint");
+      const badgeEl = document.getElementById("wizardWeekdaysCountBadge");
+      if (!box) return;
+
+      const meta = getLevelScheduleMeta(wizardState.level, wizardState.selectedPlanId);
+      if (!Array.isArray(wizardState.selectedWeekdays) || wizardState.selectedWeekdays.length !== meta.reqDays) {
+        const savedForLvl = appState.trainingWeekdaysByLevel && appState.trainingWeekdaysByLevel[wizardState.level];
+        wizardState.selectedWeekdays = (Array.isArray(savedForLvl) && savedForLvl.length === meta.reqDays)
+          ? [...savedForLvl]
+          : [...meta.defaultDays];
+      }
+
+      if (hintEl) hintEl.textContent = meta.hint;
+      if (badgeEl) {
+        badgeEl.textContent = `${wizardState.selectedWeekdays.length}/${meta.reqDays} dias`;
+      }
+
+      box.innerHTML = WEEKDAY_MINI_LABELS.map((lbl, idx) => {
+        const isSel = wizardState.selectedWeekdays.includes(idx);
+        return `
+          <button type="button" onclick="toggleWizardWeekday(${idx})" class="py-2 rounded-xl border text-[11px] font-bold transition ${
+            isSel
+              ? "border-neonGreen bg-neonGreen text-bgMain shadow"
+              : "border-borderSubtle bg-bgMain text-slate-300 hover:border-slate-500"
+          }">
+            ${lbl}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function toggleWizardWeekday(dayIndex) {
+      const meta = getLevelScheduleMeta(wizardState.level, wizardState.selectedPlanId);
+      if (!Array.isArray(wizardState.selectedWeekdays)) wizardState.selectedWeekdays = [...meta.defaultDays];
+
+      const pos = wizardState.selectedWeekdays.indexOf(dayIndex);
+      if (pos !== -1) {
+        if (wizardState.selectedWeekdays.length <= 1) return;
+        wizardState.selectedWeekdays.splice(pos, 1);
+      } else {
+        if (wizardState.selectedWeekdays.length >= meta.reqDays) {
+          // Substitui o primeiro selecionado para manter sempre o número exato de dias do nível sem travar o usuário
+          wizardState.selectedWeekdays.shift();
+        }
+        wizardState.selectedWeekdays.push(dayIndex);
+        wizardState.selectedWeekdays.sort((a, b) => a - b);
+      }
+      renderWizardWeekdaysSelector();
+    }
+
+    function renderProfileWeekdaysSelector() {
+      const box = document.getElementById("profileWeekdaysButtons");
+      const hintEl = document.getElementById("profileWeekdaysHint");
+      const badgeEl = document.getElementById("profileWeekdaysCountBadge");
+      if (!box) return;
+
+      const plan = getActivePlan();
+      const level = plan ? plan.level : "Adaptação";
+      const meta = getLevelScheduleMeta(level, plan ? plan.id : null);
+      const saved = appState.trainingWeekdaysByLevel && appState.trainingWeekdaysByLevel[level];
+      const currentDays = (Array.isArray(saved) && saved.length > 0) ? saved : meta.defaultDays;
+
+      if (hintEl) hintEl.textContent = meta.hint;
+      if (badgeEl) badgeEl.textContent = `${currentDays.length}/${meta.reqDays} dias`;
+
+      box.innerHTML = WEEKDAY_MINI_LABELS.map((lbl, idx) => {
+        const isSel = currentDays.includes(idx);
+        return `
+          <button type="button" onclick="toggleProfileWeekday(${idx})" class="py-2 rounded-xl border text-[11px] font-bold transition ${
+            isSel
+              ? "border-neonGreen bg-neonGreen text-bgMain shadow"
+              : "border-borderSubtle bg-bgMain text-slate-300 hover:border-slate-500"
+          }">
+            ${lbl}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function toggleProfileWeekday(dayIndex) {
+      const plan = getActivePlan();
+      const level = plan ? plan.level : "Adaptação";
+      const meta = getLevelScheduleMeta(level, plan ? plan.id : null);
+      if (!appState.trainingWeekdaysByLevel) appState.trainingWeekdaysByLevel = {};
+      let currentDays = Array.isArray(appState.trainingWeekdaysByLevel[level])
+        ? [...appState.trainingWeekdaysByLevel[level]]
+        : [...meta.defaultDays];
+
+      const pos = currentDays.indexOf(dayIndex);
+      if (pos !== -1) {
+        if (currentDays.length <= 1) return;
+        currentDays.splice(pos, 1);
+      } else {
+        if (currentDays.length >= meta.reqDays) {
+          currentDays.shift();
+        }
+        currentDays.push(dayIndex);
+        currentDays.sort((a, b) => a - b);
+      }
+      appState.trainingWeekdaysByLevel[level] = currentDays;
+      saveState();
+      renderProfileWeekdaysSelector();
+      renderActiveWorkout();
+      showToast(`Dias de treino (${level}) atualizados na agenda!`, "success");
+    }
+
     function openOnboardingWizard(startStep = 0) {
       // Se o usuário já existe e já concluiu o cadastro inicial, nunca mais exibe as telas de Masculino/Feminino ou Nível: abre apenas o modal rápido de Perfil/Medidas!
       if (appState.onboardingDone && appState.levelLocked && appState.cloudAccountEmail && !isNewUserSetupFlow) {
@@ -8258,6 +8468,8 @@
           ? "wiz-lvl-btn p-3 rounded-xl border-2 border-neonGreen bg-neonGreen/15 text-left transition shadow"
           : "wiz-lvl-btn p-3 rounded-xl border border-borderSubtle bg-bgInput hover:border-slate-500 text-left transition";
       });
+      wizardState.selectedWeekdays = null;
+      renderWizardWeekdaysSelector();
       renderWizardPlansList();
     }
 
@@ -8349,6 +8561,10 @@
         const chosenPlan = getActivePlan();
         const chosenStartDay = chosenPlan.days.find(d => d.id === wizardState.selectedStartDayId) || chosenPlan.days[0];
         appState.activeDayId = chosenStartDay.id;
+        if (!appState.trainingWeekdaysByLevel) appState.trainingWeekdaysByLevel = {};
+        if (Array.isArray(wizardState.selectedWeekdays) && wizardState.selectedWeekdays.length > 0) {
+          appState.trainingWeekdaysByLevel[chosenPlan.level] = [...wizardState.selectedWeekdays];
+        }
         appState.levelLocked = true;
         appState.onboardingDone = true;
         ensurePlanProgressIntegrity();
@@ -9237,6 +9453,7 @@
       if (gQuick) gQuick.value = appState.userGoal || "Definição";
 
       if (typeof applyUserTheme === 'function') applyUserTheme();
+      if (typeof renderProfileWeekdaysSelector === 'function') renderProfileWeekdaysSelector();
       updateCloudAuthUI(currentCloudUser);
       document.getElementById("cloudLoginModal").classList.remove("hidden");
     };
