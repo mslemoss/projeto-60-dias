@@ -154,6 +154,15 @@
     @keyframes bioKneeExt { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-70deg); } }
     @keyframes bioSquatBody { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(24px); } }
     @keyframes bioMusclePulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+    @keyframes bioKickBack { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(36deg); } }
+    @keyframes bioAbductOpen { 0%, 100% { transform: translateX(0px); } 50% { transform: translateX(18px); } }
+    @keyframes bioAbductOpenL { 0%, 100% { transform: translateX(0px); } 50% { transform: translateX(-18px); } }
+    @keyframes bioLegPressPush { 0%, 100% { transform: translate(0px, 0px); } 50% { transform: translate(22px, -22px); } }
+    @keyframes bioLegRaise { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-60deg); } }
+    @keyframes bioWristFlex { 0%, 100% { transform: rotate(15deg); } 50% { transform: rotate(-35deg); } }
+    @keyframes bioDipMove { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(20px); } }
+    @keyframes bioPulloverArc { 0%, 100% { transform: rotate(-55deg); } 50% { transform: rotate(15deg); } }
+    @keyframes bioOverheadPress { 0%, 100% { transform: translateY(18px); } 50% { transform: translateY(-16px); } }
     .bio-muscle-pulse { animation: bioMusclePulse 2s ease-in-out infinite; }
   </style>
   <style id="dynamicUserThemeStyles"></style>
@@ -219,6 +228,12 @@
           <button onclick="switchTab('history')" class="h-8 px-2.5 rounded-xl bg-bgCard border border-borderSubtle hover:border-blue-500/50 text-slate-200 text-[11px] font-bold flex items-center gap-1 transition">
             <i class="ph-fill ph-chart-bar text-blue-400 text-sm"></i>
             <span>Relatório</span>
+          </button>
+
+          <!-- Botão Admin (exclusivo matheuslemos2003@yahoo.com.br) -->
+          <button id="btnAdminAudit" onclick="openAdminAuditModal()" title="Painel Admin — Auditar Vídeos e Animações 2D" class="hidden h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition">
+            <i class="ph-fill ph-shield-check text-amber-400 text-sm"></i>
+            <span>Admin</span>
           </button>
         </div>
       </div>
@@ -1394,6 +1409,7 @@
         </button>
       </div>
 
+      <div id="demoBisetSwitcher" class="hidden flex flex-wrap items-center gap-1.5 bg-bgInput border border-borderSubtle rounded-xl p-1.5"></div>
       <div class="flex items-center gap-2 border-b border-borderSubtle">
         <button id="demoTabBtnBio" onclick="switchDemoView('biomechanics')" class="px-3.5 py-2 rounded-t-xl text-xs font-bold border-b-2 border-neonGreen text-neonGreen bg-neonGreen/10 flex items-center gap-1.5 transition">
           <i class="ph-fill ph-person-simple-run"></i> Simulador 2D & Técnica
@@ -2061,117 +2077,147 @@
      *************************************************************************/
     // Cada exercício agora aponta para o vídeo real e verificado daquele movimento específico
     const OFFICIAL_BALESTRIN_VIDEOS = {
-      // Costas & Dorsal (1 a 9, 35, 46, 48 + variações das fichas)
-      "Pulley Frente": "https://www.youtube.com/watch?v=ftcql3-AMRs",
-      "Puxador Alto Aberto Pronado": "https://www.youtube.com/watch?v=ftcql3-AMRs",
-      "Puxador Alto Fechado Supinado": "https://www.youtube.com/watch?v=BcD0GxxHk7o",
-      "Barra Fixa": "https://www.youtube.com/watch?v=l4q0ya0a8wk",
-      "Pulldown": "https://www.youtube.com/watch?v=3EX6-OYEbmk",
-      "Pulldown c/ Corda": "https://www.youtube.com/watch?v=GDhW19yQrJI",
-      "Remada Curvada": "https://www.youtube.com/watch?v=ZdeGd89HLY0",
-      "Remada Curvada c/ Halteres": "https://www.youtube.com/watch?v=ZdeGd89HLY0",
-      "Remada Curvada Supinada Barra W": "https://www.youtube.com/watch?v=PURtAZg5v2o",
-      "Remada Cavalinho": "https://www.youtube.com/watch?v=oaa1ubqfsl0",
-      "Remada Serrote": "https://www.youtube.com/watch?v=G2gbM0N2ey8",
-      "Remada Unilateral": "https://www.youtube.com/watch?v=bFTuewmFuA4",
-      "Remada Unilateral c/ Halter": "https://www.youtube.com/watch?v=G2gbM0N2ey8",
-      "Remada Baixa": "https://www.youtube.com/watch?v=e997VfKgOy0",
-      "Remada Baixa c/ Triângulo": "https://www.youtube.com/watch?v=e997VfKgOy0",
-      "Remada Baixa Barra Reta Pronada Aberta": "https://www.youtube.com/watch?v=YiBlwb32gqo",
-      "Levantamento Terra": "https://www.youtube.com/watch?v=aNRacCyGzLA",
-      "Levantamento Terra na Polia": "https://www.youtube.com/watch?v=aNRacCyGzLA",
-      "Hiperextensão Lombar": "https://www.youtube.com/watch?v=ds9aX5XGBa0",
+      // Costas & Dorsal
+      "Pulley Frente": "https://youtu.be/ombutkNe13A",
+      "Puxador Alto Aberto Pronado": "https://youtu.be/ombutkNe13A",
+      "Puxador Alto Fechado Supinado": "https://youtu.be/DjNsJOWWjYQ",
+      "Puxador Alto c/ Triângulo": "https://youtu.be/w9qZRuHiYrg",
+      "Barra Fixa": "https://youtu.be/ukkDDoJJz0Q",
+      "Pulldown": "https://youtu.be/bckv5CsvHDQ",
+      "Pulldown c/ Corda": "https://youtu.be/mIs2EhEVpkw",
+      "Remada Curvada": "https://youtu.be/sf4nUaN4gXk",
+      "Remada Curvada Pronada": "https://youtu.be/jdaXwc2a81U",
+      "Remada Curvada c/ Halteres": "https://youtu.be/cJ1GcJdRqy8",
+      "Remada Curvada Supinada Barra W": "https://youtu.be/N8kBF09Zca8",
+      "Remada Cavalinho": "https://youtu.be/u0GmO-eZv-8",
+      "Remada Serrote": "https://youtu.be/oqbprgbkSdg",
+      "Remada Unilateral": "https://youtu.be/oqbprgbkSdg",
+      "Remada Unilateral c/ Halter": "https://youtu.be/3CdB2HNSb7Q",
+      "Remada Baixa": "https://youtu.be/Ex4CxsLt_-4",
+      "Remada Baixa c/ Triângulo": "https://youtu.be/Ex4CxsLt_-4",
+      "Remada Baixa Barra Reta Pronada Aberta": "https://youtu.be/7HFUZimyf00",
+      "Levantamento Terra": "https://youtu.be/L1FmgEF4GfY",
+      "Levantamento Terra na Polia": "https://www.youtube.com/watch?v=a_MT6ObGjF0",
+      "Hiperextensão Lombar": "https://youtu.be/Uug-ffgMB6s",
 
-      // Peitoral (10 a 14 + variações das fichas)
-      "Supino Inclinado": "https://www.youtube.com/watch?v=ExhidCbJRrI",
-      "Supino Inclinado c/ Halter": "https://www.youtube.com/watch?v=xDcvLEt8h8k",
-      "Supino Inclinado no Smith": "https://www.youtube.com/watch?v=3pV9sa-kHvg",
-      "Supino Reto": "https://www.youtube.com/watch?v=MPM1bqU7b44",
-      "Supino Reto c/ Halter": "https://www.youtube.com/watch?v=MPM1bqU7b44",
+      // Peitoral
+      "Supino Inclinado": "https://youtu.be/XjTLBmhNA7w",
+      "Supino Inclinado c/ Halter": "https://youtu.be/XjTLBmhNA7w",
+      "Supino Inclinado no Smith": "https://youtu.be/X-dJ9cLyGb4",
+      "Supino Reto": "https://youtu.be/byHM9Ev1q18",
+      "Supino Reto c/ Halter": "https://youtu.be/nZZMJQ1YADs",
+      "Supino Reto no Smith": "https://youtu.be/byHM9Ev1q18",
       "Supino Declinado": "https://www.youtube.com/watch?v=yUzyxx9IJ4M",
-      "Crossover": "https://www.youtube.com/watch?v=co9G4G8Syt8",
+      "Crossover": "https://youtu.be/VeEkYSAwvOs",
       "Crossover Unilateral Na Polia Alta": "https://www.youtube.com/watch?v=_hdQD_E3deE",
       "Crossover Unilateral Na Polia Baixa": "https://www.youtube.com/watch?v=DF3J-cVrZMA",
-      "Crucifixo Inclinado Cabo": "https://www.youtube.com/watch?v=PU0u8sRvX2o",
-      "Crucifixo Reto c/ Halter": "https://www.youtube.com/watch?v=PU0u8sRvX2o",
-      "Paralelas": "https://www.youtube.com/watch?v=yUzyxx9IJ4M",
+      "Crucifixo Inclinado Cabo": "https://youtu.be/HwHp5upK7IM",
+      "Crucifixo Inclinado c/ Halter": "https://youtu.be/ufBWCw9QAuQ",
+      "Crucifixo Reto": "https://youtu.be/tuBZyQI8UA0",
+      "Crucifixo Reto c/ Halter": "https://youtu.be/MVCM5tgVBjE",
+      "Crucifixo Máquina": "https://youtu.be/OldHtIDsECE",
+      "Flexões de Braço no Solo": "https://youtu.be/w7SaGFSx0FQ",
+      "Paralelas": "https://youtu.be/ftF9k9J878A",
+      "Pulôver": "https://youtu.be/yDp9ctI4O-s",
 
-      // Ombros & Trapézio (7, 8, 27, 28, 29, 30 + variações)
-      "Desenvolvimento c/ Halteres": "https://www.youtube.com/watch?v=P7wl86eDWzQ",
-      "Desenvolvimento Sentado 90º c/ Halter": "https://www.youtube.com/watch?v=SXWQquplD4g",
-      "Desenvolvimento Arnold Press": "https://www.youtube.com/watch?v=P7wl86eDWzQ",
-      "Elevação Lateral": "https://www.youtube.com/watch?v=AXyz3LONUkY",
-      "Elevação Lateral c/ Halter": "https://www.youtube.com/watch?v=AXyz3LONUkY",
-      "Elevação Frontal Na polia": "https://www.youtube.com/watch?v=g5noKt-xcm8",
-      "Elevação Frontal c/ Barra Pronada": "https://www.youtube.com/watch?v=g5noKt-xcm8",
+      // Ombros & Trapézio
+      "Desenvolvimento c/ Halteres": "https://youtu.be/DxPGcQcoyGU",
+      "Desenvolvimento Sentado c/ Halter": "https://youtu.be/pbWmRZEpC0c",
+      "Desenvolvimento Sentado 90º c/ Halter": "https://youtu.be/eSKr26-URhU",
+      "Desenvolvimento Arnold Press": "https://youtu.be/JDVOmnEAN1Q",
+      "Elevação Lateral": "https://youtu.be/C9kq4Voiy2k",
+      "Elevação Lateral c/ Halter": "https://youtu.be/C9kq4Voiy2k",
+      "Elevação Frontal Na polia": "https://youtu.be/MLgy5GlDG0o",
+      "Elevação Frontal c/ Barra Pronada": "https://youtu.be/b9QVKGsYauA",
+      "Elevação Frontal c/ Halter": "https://youtu.be/xBknKvtQJJ0",
       "Remada Alta": "https://www.youtube.com/watch?v=6uQYRJj5hZU",
       "Facepull": "https://www.youtube.com/watch?v=NCz6dsvp-_0",
       "Crucifixo Inverso Unilateral": "https://www.youtube.com/watch?v=C5ygzV7KJFg",
-      "Crucifixo Máquina Inverso": "https://www.youtube.com/watch?v=C5ygzV7KJFg",
-      "Encolhimento": "https://www.youtube.com/watch?v=Dl5jKuF4hLY",
-      "Encolhimento c/ Halter": "https://www.youtube.com/watch?v=9trJxITED2A",
+      "Crucifixo Máquina Inverso": "https://youtu.be/VhSSPXVhyuc",
+      "Crucifixo Banco Inverso": "https://youtu.be/bch_80qhZn0",
+      "Encolhimento": "https://youtu.be/t8NHrUlvW1c",
+      "Encolhimento c/ Halter": "https://youtu.be/t8NHrUlvW1c",
 
-      // Bíceps & Antebraço (15 a 22, 47, 49 + Bi-sets)
-      "Rosca Direta": "https://www.youtube.com/watch?v=gULl2u-FD6Q",
-      "Rosca Scott": "https://www.youtube.com/watch?v=WH6IgVJeK68",
-      "Rosca Scott Máquina": "https://www.youtube.com/watch?v=WH6IgVJeK68",
-      "Rosca Scott Máquina + Tríceps Pulley Barra W": "https://www.youtube.com/watch?v=WH6IgVJeK68",
-      "Rosca Scott na Polia": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Concentrada": "https://www.youtube.com/watch?v=cark8rC-Gfc",
-      "Rosca Concentrada na Polia": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Unilateral Polia Baixa": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Unilateral Polia Alta": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Martelo Polia": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Cabo Corda em Pé": "https://www.youtube.com/watch?v=nvZcRVcg-OA",
-      "Rosca Alternada em Pé c/ Isometria": "https://www.youtube.com/watch?v=AEXkxZe7HBo",
-      "Rosca Alternada c/ Isometria + Tríceps Francês Sentado": "https://www.youtube.com/watch?v=AEXkxZe7HBo",
-      "Rosca Inversa": "https://www.youtube.com/watch?v=KX1mEovB8C8",
-      "Rosca Inversa Barra W": "https://www.youtube.com/watch?v=KX1mEovB8C8",
-      "Flexão De Punho": "https://www.youtube.com/watch?v=KX1mEovB8C8",
+      // Bíceps & Antebraço
+      "Rosca Direta": "https://youtu.be/64PmXXKG-cU",
+      "Rosca Direta c/ Barra W": "https://youtu.be/64PmXXKG-cU",
+      "Rosca Scott": "https://youtu.be/hQYEZAkcSHA",
+      "Rosca Scott Máquina": "https://youtu.be/5mVpryaNNY8",
+      "Rosca Scott Máquina + Tríceps Pulley Barra W": "https://youtu.be/5mVpryaNNY8",
+      "Rosca Scott na Polia": "https://www.youtube.com/watch?v=PnJJ-fMAl0U",
+      "Rosca Concentrada": "https://youtu.be/ReQ0kABHYC0",
+      "Rosca Concentrada na Polia": "https://www.youtube.com/watch?v=jDuE_v0s_nU",
+      "Rosca Unilateral Polia Baixa": "https://youtu.be/lpTXmW3wE7I",
+      "Rosca Unilateral Polia Alta": "https://www.youtube.com/watch?v=BaIasPsvrc4",
+      "Rosca Martelo Polia": "https://youtu.be/UuknHYJlXuA",
+      "Rosca Cabo Corda em Pé": "https://youtu.be/UuknHYJlXuA",
+      "Rosca Alternada c/ Halter": "https://youtu.be/umjfUgtUKY0",
+      "Rosca Alternada c/ Isometria": "https://youtu.be/uCtW1eepEhs",
+      "Rosca Alternada em Pé c/ Isometria": "https://youtu.be/uCtW1eepEhs",
+      "Rosca Alternada c/ Isometria + Tríceps Francês Sentado": "https://youtu.be/uCtW1eepEhs",
+      "Rosca Inversa": "https://youtu.be/5MCZJ05-oZo",
+      "Rosca Inversa Barra W": "https://youtu.be/5MCZJ05-oZo",
+      "Rosca Inversa c/ Barra W": "https://youtu.be/5MCZJ05-oZo",
+      "Flexão De Punho": "https://www.youtube.com/watch?v=3PDPiCoWF-Y",
 
-      // Tríceps (23 a 26 + variações)
-      "Tríceps Na polia": "https://www.youtube.com/watch?v=ydCyZ0hkfQs",
-      "Tríceps Testa": "https://www.youtube.com/watch?v=aNr8yjs34nM",
-      "Tríceps Testa c/ Corda em Pé": "https://www.youtube.com/watch?v=aNr8yjs34nM",
-      "Tríceps Francês": "https://www.youtube.com/watch?v=YwWIT0kIrco",
-      "Tríceps Francês Unilateral Sentado c/ Halter": "https://www.youtube.com/watch?v=YwWIT0kIrco",
-      "Tríceps Coice Unilateral na Polia": "https://www.youtube.com/watch?v=rEtpJw7q2PE",
+      // Tríceps
+      "Tríceps Na polia": "https://youtu.be/1MtkdXaRnv0",
+      "Tríceps Pulley Barra Reta Pronada": "https://youtu.be/1MtkdXaRnv0",
+      "Tríceps Pulley Barra W": "https://youtu.be/1MtkdXaRnv0",
+      "Tríceps Pulley Corda": "https://youtu.be/uiZx0hBXEl0",
+      "Tríceps Pulley Inverso": "https://youtu.be/-1DZNG3ZYD8",
+      "Tríceps Testa": "https://youtu.be/g5ZVa9TmO94",
+      "Tríceps Testa c/ Corda em Pé": "https://youtu.be/gvcy1rsfmXU",
+      "Tríceps Francês": "https://youtu.be/hP-tnMhlMSQ",
+      "Tríceps Francês Sentado": "https://youtu.be/x60UYcJYXxM",
+      "Tríceps Francês Unilateral Sentado c/ Halter": "https://youtu.be/xR6gaABXvlA",
+      "Tríceps Coice Unilateral na Polia": "https://youtu.be/hLh4atePHOQ",
+      "Tríceps Mergulho": "https://youtu.be/ZKe6eOAUHlg",
 
-      // Pernas, Glúteos & Panturrilhas (31 a 43, 50 + variações)
-      "Cadeira Extensora": "https://www.youtube.com/watch?v=MoC2fYM58Fs",
-      "Mesa Flexora": "https://www.youtube.com/watch?v=T6dsD1iwOMM",
+      // Pernas, Glúteos & Panturrilhas
+      "Cadeira Extensora": "https://youtu.be/2OfU86jswKA",
+      "Mesa Flexora": "https://youtu.be/IYcs6fxqEAM",
       "Cadeira Flexora Em Pé": "https://www.youtube.com/watch?v=T6dsD1iwOMM",
-      "Flexor Sentado": "https://www.youtube.com/watch?v=T6dsD1iwOMM",
+      "Flexor Sentado": "https://youtu.be/IiUEaQ9EN6M",
+      "Flexor Deitado c/ Halter": "https://youtu.be/Grf4xGo6MHM",
       "Flexão De Perna": "https://www.youtube.com/watch?v=T6dsD1iwOMM",
-      "Agachamento Livre": "https://www.youtube.com/watch?v=o2rwxw12nag",
-      "Agachamento no Smith": "https://www.youtube.com/watch?v=7bRB3qXkoyc",
+      "Agachamento Livre": "https://youtu.be/ihmJ6_gW3jk",
+      "Agachamento no Smith": "https://youtu.be/lZHmPNnMtqo",
       "Agachamento na Polia": "https://www.youtube.com/watch?v=71rG-bQIILA",
       "Agachamento Sumô na Polia": "https://www.youtube.com/watch?v=71rG-bQIILA",
-      "Leg Press Pés Paralelos": "https://www.youtube.com/watch?v=uvsmIl1Fv4A",
-      "Afundo Búlgaro": "https://www.youtube.com/watch?v=5JkcQHSVpKo",
+      "Agachamento Sumô c/ Halter": "https://youtu.be/-wGuVH9UmXE",
+      "Agachamento c/ Bola": "https://www.youtube.com/watch?v=qav_uDsfpYk",
+      "Leg Press Pés Paralelos": "https://youtu.be/bJGqSWz9A-w",
+      "Leg Press Pés Abduzidos": "https://youtu.be/2gzV9cIDfsg",
+      "Afundo Búlgaro": "https://youtu.be/CqAi-zHVRJw",
       "Afundo": "https://www.youtube.com/watch?v=EXHz7hDL7PE",
-      "Avanço no Smith": "https://www.youtube.com/watch?v=5JkcQHSVpKo",
-      "Passada c/ Halteres": "https://www.youtube.com/watch?v=EXHz7hDL7PE",
-      "Stiff": "https://www.youtube.com/watch?v=Vjtn6n_-sXo",
-      "Stiff c/ Barra": "https://www.youtube.com/watch?v=Vjtn6n_-sXo",
+      "Avanço no Smith": "https://youtu.be/ZjeYDNHkgmY",
+      "Passada c/ Halteres": "https://youtu.be/kDgglyBhsr8",
+      "Passadas Livres": "https://youtu.be/Jg7m-VjpYiM",
+      "Stiff": "https://youtu.be/c538XsY71yQ",
+      "Stiff c/ Barra": "https://youtu.be/c538XsY71yQ",
       "Stiff na polia": "https://www.youtube.com/watch?v=VV0YIQc04B8",
-      "Elevação Pélvica c/ Barra": "https://www.youtube.com/watch?v=KpMi3fawUE0",
-      "Extensão de Quadril": "https://www.youtube.com/watch?v=ToE6yT5pHZ0",
-      "Coice na Polia": "https://www.youtube.com/watch?v=ToE6yT5pHZ0",
+      "Elevação Pélvica c/ Barra": "https://youtu.be/2BhAkJp9q0o",
+      "Extensão de Quadril": "https://www.youtube.com/watch?v=KpMi3fawUE0",
+      "Coice na Polia": "https://youtu.be/3KukhrZ3uOo",
+      "Glúteos Cabo Perna Estendida": "https://youtu.be/9tofzBmju0c",
       "Abdução de Quadril": "https://www.youtube.com/watch?v=3NqFRDKdY8o",
-      "Cadeira Abdutora": "https://www.youtube.com/watch?v=wMvvQ5l7VNE",
-      "Cadeira Adutora": "https://www.youtube.com/watch?v=rzrscjkvL_g",
-      "Cadeira Adutora + Cadeira Abdutora": "https://www.youtube.com/watch?v=wMvvQ5l7VNE",
-      "Panturrilha em Pé": "https://www.youtube.com/watch?v=Ryg_jNS1wZc",
-      "Panturrilha Sentado": "https://www.youtube.com/watch?v=HdNGCVv4pPY",
-      "Panturrilha no Leg Press": "https://www.youtube.com/watch?v=Ryg_jNS1wZc",
+      "Cadeira Abdutora": "https://youtu.be/J8MK-rptmdY",
+      "Cadeira Adutora": "https://youtu.be/lPXcHBSWSQU",
+      "Cadeira Adutora + Cadeira Abdutora": "https://youtu.be/lPXcHBSWSQU",
+      "Panturrilha em Pé": "https://youtu.be/LVS3_g3anY4",
+      "Panturrilha Sentado": "https://youtu.be/L4OD1FYxEAg",
+      "Panturrilha no Leg Press": "https://youtu.be/3_Zy-0RM04I",
 
-      // Abdômen & Core (44, 45 + variações)
+      // Abdômen & Core
       "Abdominal na Polia": "https://www.youtube.com/watch?v=k_FMzYXtDUI",
       "Abdominal Oblíquo na Polia": "https://www.youtube.com/watch?v=Y23N2BNZHgE",
-      "Abdominal Crunch c/ Peso": "https://www.youtube.com/watch?v=k_FMzYXtDUI",
-      "Abdominal Canivete": "https://www.youtube.com/watch?v=c4cIqvtnLgY",
-      "Prancha Isométrica": "https://www.youtube.com/watch?v=k_FMzYXtDUI"
+      "Abdominal Crunch c/ Peso": "https://youtu.be/jIcA1YX1n-E",
+      "Abdominal Crunch Banco Reto": "https://youtu.be/4_kqB23VGWU",
+      "Abdominal Banco Reto": "https://youtu.be/4_kqB23VGWU",
+      "Abdominal Inferior Banco Reto": "https://youtu.be/f5a8eeM4mQ8",
+      "Abdominal Canivete": "https://youtu.be/aJHdvTV2irY",
+      "Prancha Isométrica": "https://youtu.be/Ri_2CDR-_eA"
     };
 
     // Perfis Biomecânicos Detalhados por Padrão de Movimento
@@ -7250,6 +7296,26 @@
         mistakes: "Dobrar e esticar o cotovelo transformando o exercício em tríceps pulley, ou jogar o peso do tronco para baixo usando impulso lombar.",
         goldenTip: "Imagine que suas mãos são apenas ganchos e empurre o ar para baixo em direção ao seu bolso usando as axilas."
       },
+      "pulover": {
+        pattern: "pullover_arc",
+        title: "Pulôver no Banco (Extensão de Ombros / Expansão)",
+        muscles: "Grande Dorsal, Peitoral Maior (Fibras Inferiores) e Serrátil • Sinergista: Tríceps (Cabeça Longa)",
+        setup: "Deite-se no banco com as escápulas firmes, pés bem apoiados no chão e segure o halter acima do peito com os cotovelos levemente destravados (ângulo fixo).",
+        concentric: "Puxe o halter de volta em arco até alinhar acima do peitoral, conduzindo a força pelos cotovelos e axilas sem flexionar os braços.",
+        eccentric: "Desça o halter para trás da cabeça em arco amplo e controlado por 3 segundos até sentir alongamento profundo das dorsais e caixa torácica, sem arquear excessivamente a lombar.",
+        mistakes: "Dobrar os cotovelos demais (transformando em tríceps testa) ou descer rápido perdendo o controle do ombro.",
+        goldenTip: "Mantenha o quadril baixo e o abdômen contraído durante toda a descida para proteger a lombar e focar na dorsal/peitoral."
+      },
+      "paralelas": {
+        pattern: "dips_bar",
+        title: "Paralelas (Peito / Tríceps em Cadeia Fechada)",
+        muscles: "Peitoral Inferior, Tríceps Braquial e Deltoide Anterior",
+        setup: "Segure firme nas barras paralelas, estabilize os ombros para baixo (longe das orelhas) e cruze os tornozelos atrás. Incline levemente o tronco à frente para enfatizar peitoral (ou mantenha reto para tríceps).",
+        concentric: "Empurre as barras para baixo estendendo os cotovelos até próximo ao topo sem travar secamente a articulação.",
+        eccentric: "Desça o corpo de forma controlada até os cotovelos formarem cerca de 90° (ombro alinhado ou levemente abaixo do cotovelo).",
+        mistakes: "Deixar os ombros subirem em direção às orelhas na descida ou balançar as pernas para ganhar impulso.",
+        goldenTip: "Pense em empurrar as barras para longe do chão mantendo o peito aberto e os ombros sempre deprimidos."
+      },
       "flexoes de braco": {
         pattern: "chest_press",
         title: "Flexão de Braços no Solo (Cadeia Fechada)",
@@ -7262,9 +7328,9 @@
       },
       "crucifixo": {
         pattern: "chest_fly",
-        title: "Crucifixo / Voador / Crossover (Adução Horizontal)",
+        title: "Crucifixo / Voador / Peck Deck (Adução Horizontal)",
         muscles: "Peitoral Maior (Fibras Esternais/Claviculares) • Sinergista: Deltoide Anterior",
-        setup: "Deitado no banco, sentado no Peck Deck ou posicionado no centro do Crossover. Escápulas retraídas e coladas no apoio, peito estufado e cotovelos levemente flexionados (ângulo fixo durante todo o movimento).",
+        setup: "Deitado no banco ou sentado no Peck Deck: escápulas retraídas e coladas no apoio, peito estufado e cotovelos levemente flexionados (ângulo fixo durante todo o movimento).",
         concentric: "Feche os braços em um arco amplo como se estivesse abraçando o tronco de uma árvore até alinhar punhos e cotovelos na frente do centro do peito, espremendo o peitoral por 1 segundo.",
         eccentric: "Abra os braços devagar em 2 a 3 segundos até que os cotovelos cheguem à linha do tronco (sentindo o alongamento peitoral sem forçar a cápsula articular do ombro para trás demais).",
         mistakes: "Dobrar os cotovelos na subida transformando o crucifixo em um supino fechado, ou bater os halteres no topo perdendo tensão.",
@@ -7282,9 +7348,9 @@
       },
       "crucifixo inverso": {
         pattern: "shoulder_raise",
-        title: "Crucifixo Inverso (Máquina, Halter ou Polia)",
+        title: "Crucifixo Inverso (Máquina, Halter ou Banco)",
         muscles: "Deltoide Posterior, Infraespinhal e Trapézio Médio",
-        setup: "Tronco apoiado (na máquina) ou inclinado (com halteres/polia). Pegada neutra ou pronada na linha dos ombros, mantendo as escápulas relaxadas (sem retrair totalmente antes de puxar) para isolar o posterior de ombro.",
+        setup: "Tronco apoiado (na máquina/banco inclinado) ou inclinado com coluna neutra. Pegada neutra ou pronada na linha dos ombros, mantendo os ombros longe das orelhas para isolar o posterior de ombro.",
         concentric: "Abra os braços para trás em linha horizontal levando os cotovelos para longe do corpo até alinharem com o tronco.",
         eccentric: "Retorne lentamente à frente sem deixar os pesos tocarem, mantendo tensão constante na parte de trás do ombro.",
         mistakes: "Juntar as escápulas com força usando o meio das costas em vez do deltoide posterior, ou abaixar os cotovelos.",
@@ -7320,6 +7386,16 @@
         mistakes: "Fazer movimentos circulares ('girar' os ombros, o que desgasta a articulação sem gerar força vertical) ou dobrar os cotovelos.",
         goldenTip: "Nunca gire os ombros; a linha de força da gravidade é 100% vertical (sobe reto, segura 2s e desce reto)."
       },
+      "flexao de punho": {
+        pattern: "wrist_curl",
+        title: "Flexão de Punho (Antebraço)",
+        muscles: "Flexores do Punho e Antebraço (Flexor Radial e Ulnar do Carpo)",
+        setup: "Sente-se no banco com os antebraços apoiados sobre as coxas ou sobre o banco, deixando apenas os punhos e mãos livres além da borda, com pegada supinada (palmas para cima).",
+        concentric: "Flexione os punhos para cima enrolando a barra/halteres o máximo possível sem tirar os antebraços do apoio.",
+        eccentric: "Desça lentamente abrindo levemente os dedos na ponta final para alongar os flexores e retorne à pegada firme.",
+        mistakes: "Levantar os cotovelos do apoio ou usar cargas altas demais que forcem o tendão sem amplitude real.",
+        goldenTip: "Amplitude total no punho e cadência controlada rendem muito mais estímulo no antebraço do que carga excessiva."
+      },
       "elevacao pelvica": {
         pattern: "glute_dominant",
         title: "Elevação Pélvica / Extensão de Quadril",
@@ -7331,18 +7407,18 @@
         goldenTip: "Mantenha o olhar fixo para frente e faça uma leve retroversão pélvica ('encaixe o quadril') no topo para máxima contração do glúteo."
       },
       "coice": {
-        pattern: "glute_dominant",
-        title: "Glúteo Coice na Polia Baixa / Máquina",
-        muscles: "Glúteo Máximo • Estabilizador: Glúteo Médio da perna de apoio",
+        pattern: "kickback_cable",
+        title: "Glúteo Coice / Perna Estendida na Polia",
+        muscles: "Glúteo Máximo • Estabilizador: Glúteo Médio da perna de apoio e Core",
         setup: "Prenda a tornozeleira na polia baixa. Segure na estrutura, incline o tronco a cerca de 30°-45° à frente com abdômen firme e joelho de apoio levemente destravado.",
-        concentric: "Chute a perna para trás e levemente na diagonal (~15° para fora, acompanhando a direção das fibras do glúteo máximo) até a extensão completa do quadril, sem girar a bacia.",
-        eccentric: "Retorne a perna devagar até passar ligeiramente da perna de apoio, mantendo tensão no cabo.",
+        concentric: "Estenda o quadril levando a perna para trás (mantendo o joelho estendido ou levemente flexionado conforme a ficha) até alinhar com a extensão máxima do glúteo, sem girar a bacia.",
+        eccentric: "Retorne a perna devagar até passar ligeiramente à frente da perna de apoio, mantendo tensão contínua no cabo.",
         mistakes: "Subir a perna alto demais arqueando a coluna lombar ('gangorrar' o tronco) em vez de mover apenas a articulação do quadril.",
         goldenTip: "A amplitude real da extensão do quadril é curta (~30° para trás); passou disso, quem está mexendo é a sua coluna lombar!"
       },
       "abducao": {
-        pattern: "glute_dominant",
-        title: "Cadeira Abdutora / Abdução de Quadril na Polia",
+        pattern: "abductor_adductor",
+        title: "Cadeira Abdutora / Abdução de Quadril",
         muscles: "Glúteo Médio e Glúteo Mínimo (Porção Superior/Lateral do Glúteo)",
         setup: "Na cadeira abdutora, apoie os pés nos pedais e ajuste a abertura inicial no limite máximo confortável. Na polia baixa, fique de lado para a torre com a tornozeleira na perna de fora.",
         concentric: "Afaste as pernas para fora empurrando com a lateral dos joelhos/tornozelos e segure 1 a 2 segundos na abertura máxima.",
@@ -7351,7 +7427,7 @@
         goldenTip: "Com o tronco apoiado no encosto você foca mais no glúteo médio; inclinando o tronco levemente à frente (com coluna reta) você aumenta o recrutamento das fibras superiores do glúteo máximo."
       },
       "adutora": {
-        pattern: "knee_isolation",
+        pattern: "abductor_adductor",
         title: "Cadeira Adutora",
         muscles: "Adutores da Coxa (Adutor Longo, Magno, Curto e Grácil - Parte Interna da Coxa)",
         setup: "Sente-se com a lombar e o quadril totalmente encostados no banco. Regule a trava dos apoios na maior abertura confortável para o seu alongamento.",
@@ -7360,18 +7436,38 @@
         mistakes: "Soltar o peso de uma vez na abertura (risco de estiramento na virilha) ou usar amplitude curta demais.",
         goldenTip: "Os adutores respondem excelente a amplitudes completas e controle rigoroso no pico de abertura."
       },
+      "leg press": {
+        pattern: "leg_press",
+        title: "Leg Press 45° (Pés Paralelos ou Abduzidos)",
+        muscles: "Quadríceps Femoral, Glúteo Máximo e Adutores (na variação abduzida)",
+        setup: "Sente-se encaixando bem o quadril e a lombar no encosto. Posicione os pés na plataforma na largura dos ombros (ou mais abertos e apontados para fora na variação abduzida/sumô).",
+        concentric: "Empurre a plataforma com toda a planta dos pés (foco em calcanhar e meio do pé) até quase estender os joelhos — nunca trave os joelhos no topo.",
+        eccentric: "Desça a plataforma em 2 a 3 segundos flexionando os joelhos até ~90° ou máxima amplitude sem descolar o cóccix/lombar do banco.",
+        mistakes: "Desencostar o quadril do assento no fundo da descida (arredondando a lombar) ou travar os joelhos secamente no topo.",
+        goldenTip: "Mantenha os joelhos alinhados com a ponta dos pés durante todo o trajeto e segure firme nas alças laterais para travar o quadril no banco."
+      },
+      "afundo": {
+        pattern: "lunge_split",
+        title: "Afundo / Avanço / Búlgaro / Passada",
+        muscles: "Quadríceps Femoral e Glúteo Máximo • Estabilizador: Glúteo Médio e Core",
+        setup: "Base afastada anteroposteriormente (no Búlgaro, peito do pé traseiro apoiado no banco). Tronco firme e levemente inclinado à frente (~10°-15°) se quiser maior ênfase em glúteo.",
+        concentric: "Empurre o solo pelo meio do pé e calcanhar da perna da frente até estender joelho e quadril sem dar tranco.",
+        eccentric: "Desça verticalmente levando o joelho de trás em direção ao chão de forma controlada até formar ~90° em ambos os joelhos.",
+        mistakes: "Deixar o joelho da frente cair para dentro (valgo) ou empurrar usando apenas a ponta do pé da frente.",
+        goldenTip: "Concentre cerca de 80% da força no calcanhar da perna da frente para proteger o joelho e ativar máximo quadríceps e glúteo."
+      },
       "panturrilha": {
         pattern: "calf_raise",
-        title: "Panturrilha (Sentado ou em Pé na Máquina/Smith)",
-        muscles: "Tríceps Sural (Em pé = Gastrocnêmio • Sentado c/ joelho dobrado = Sóleo)",
-        setup: "Apoie apenas a parte anterior da planta dos pés (metatarsos) na plataforma, deixando os calcanhares livres. Joelhos estendidos (se em pé) ou a 90° (se sentado).",
+        title: "Panturrilha (Sentado, em Pé ou no Leg Press)",
+        muscles: "Tríceps Sural (Em pé/Leg = Gastrocnêmio • Sentado c/ joelho dobrado = Sóleo)",
+        setup: "Apoie apenas a parte anterior da planta dos pés (metatarsos) na plataforma, deixando os calcanhares livres. Joelhos estendidos (em pé/Leg) ou a 90° (sentado).",
         concentric: "Suba na ponta dos pés o máximo possível e faça uma pausa obrigatória de 1 a 2 segundos no topo contraindo a panturrilha.",
         eccentric: "Desça os calcanhares abaixo do nível da plataforma lentamente e segure 1 segundo no alongamento máximo embaixo (para dissipar o reflexo elástico do tendão de Aquiles).",
         mistakes: "Fazer repetições curtas e rápidas 'quicando' embaixo usando apenas a mola do tendão sem trabalhar o músculo.",
         goldenTip: "A pausa de 1 segundo lá embaixo no alongamento e 1 segundo lá em cima no pico é o segredo para desenvolver panturrilhas."
       },
       "hiperextensao lombar": {
-        pattern: "core_iso",
+        pattern: "hip_hinge",
         title: "Hiperextensão Lombar no Banco Romano (45°)",
         muscles: "Eretores da Espinha (Lombar), Glúteo Máximo e Isquiotibiais",
         setup: "Ajuste o apoio do banco 45° logo abaixo da crista ilíaca (ossos do quadril), permitindo que você dobre na articulação do quadril. Braços cruzados no peito.",
@@ -7389,6 +7485,16 @@
         eccentric: "Sustente a isometria respirando de maneira curta e contínua pelo tempo prescrito no cronômetro sem deixar a lombar ceder.",
         mistakes: "Deixar o quadril cair em direção ao chão (gerando dor lombar) ou levantar o quadril alto demais formando uma cabana.",
         goldenTip: "Contrair os glúteos e os quadríceps durante a prancha aumenta em mais de 40% a estabilidade e a ativação do abdômen profundo."
+      },
+      "abdominal canivete": {
+        pattern: "ab_leg_raise",
+        title: "Abdominal Canivete / Infra no Banco",
+        muscles: "Reto Abdominal (Porção Infra e Supra) e Oblíquos",
+        setup: "Deitado em decúbito dorsal (no colchonete ou banco reto), pernas estendidas ou levemente destravadas e lombar pressionada contra o apoio.",
+        concentric: "Eleve simultaneamente as pernas e o tronco em direção ao centro (ou traga os joelhos/pernas em direção ao peito no infra), soltando todo o ar e tirando o quadril levemente do apoio.",
+        eccentric: "Retorne pernas e tronco devagar em 2 a 3 segundos sem deixar a lombar desencostar e arquear no ponto mais baixo.",
+        mistakes: "Descer as pernas rápido arqueando a lombar (sobrecarregando o psoas e a coluna) ou dar tranco com os braços.",
+        goldenTip: "Se sentir a lombar descolar do banco/chão ao descer as pernas, reduza um pouco o ângulo de descida mantendo o abdômen travado."
       }
     };
 
@@ -7396,40 +7502,70 @@
     function getBiomechanicsProfile(exName) {
       const n = normalizeStr(exName);
 
-      // 1. Verifica primeiro se há um guia dedicado exato por palavra-chave prioritária
+      // 1. Verifica primeiro guias dedicados exatos por palavra-chave prioritária
       if (n.includes("pulldown")) return SPECIFIC_EXERCISE_GUIDES["pulldown"];
+      if (n.includes("pulover") || n.includes("pullover") || n.includes("pull over")) return SPECIFIC_EXERCISE_GUIDES["pulover"];
+      if (n.includes("paralela")) return SPECIFIC_EXERCISE_GUIDES["paralelas"];
+      if (n.includes("flexao de punho") || n.includes("punho")) return SPECIFIC_EXERCISE_GUIDES["flexao de punho"];
       if (n.includes("flexoes de braco") || n.includes("flexao de braco")) return SPECIFIC_EXERCISE_GUIDES["flexoes de braco"];
-      if (n.includes("crucifixo inverso") || n.includes("posterior de ombro")) return SPECIFIC_EXERCISE_GUIDES["crucifixo inverso"];
+      if ((n.includes("crucifixo") && n.includes("inverso")) || n.includes("posterior de ombro")) return SPECIFIC_EXERCISE_GUIDES["crucifixo inverso"];
       if (n.includes("crucifixo") || n.includes("voador") || n.includes("peck deck")) return SPECIFIC_EXERCISE_GUIDES["crucifixo"];
       if (n.includes("crossover")) return SPECIFIC_EXERCISE_GUIDES["crossover"];
       if (n.includes("facepull")) return SPECIFIC_EXERCISE_GUIDES["facepull"];
       if (n.includes("remada alta")) return SPECIFIC_EXERCISE_GUIDES["remada alta"];
       if (n.includes("encolhimento")) return SPECIFIC_EXERCISE_GUIDES["encolhimento"];
-      if (n.includes("elevacao pelvica") || n.includes("extensao de quadril")) return SPECIFIC_EXERCISE_GUIDES["elevacao pelvica"];
-      if (n.includes("coice na polia") || n.includes("gluteo na polia") || n.includes("gluteo maquina") || (n.includes("coice") && !n.includes("triceps"))) return SPECIFIC_EXERCISE_GUIDES["coice"];
+      if (n.includes("elevacao pelvica")) return SPECIFIC_EXERCISE_GUIDES["elevacao pelvica"];
+      if (n.includes("coice na polia") || n.includes("extensao de quadril") || n.includes("gluteo") || (n.includes("coice") && !n.includes("triceps"))) return SPECIFIC_EXERCISE_GUIDES["coice"];
       if (n.includes("abdutora") || n.includes("abducao")) return SPECIFIC_EXERCISE_GUIDES["abducao"];
       if (n.includes("adutora") || n.includes("aducao")) return SPECIFIC_EXERCISE_GUIDES["adutora"];
       if (n.includes("panturrilha") || n.includes("gemeos")) return SPECIFIC_EXERCISE_GUIDES["panturrilha"];
+      if (n.includes("leg press")) return SPECIFIC_EXERCISE_GUIDES["leg press"];
+      if (n.includes("afundo") || n.includes("bulgaro") || n.includes("avanco") || n.includes("passada") || n.includes("recuo")) return SPECIFIC_EXERCISE_GUIDES["afundo"];
       if (n.includes("hiperextensao") || n.includes("lombar")) return SPECIFIC_EXERCISE_GUIDES["hiperextensao lombar"];
       if (n.includes("prancha")) return SPECIFIC_EXERCISE_GUIDES["prancha"];
+      if (n.includes("canivete") || n.includes("abdominal inferior") || n.includes("infra")) return SPECIFIC_EXERCISE_GUIDES["abdominal canivete"];
 
-      // 2. Categorias biomecânicas gerais revisadas (Tríceps verificado ANTES de Pulley/Costas!)
-      if (n.includes("triceps") || n.includes("frances") || n.includes("testa") || n.includes("mergulho")) {
+      // 2. Categorias biomecânicas gerais revisadas
+      if (n.includes("mergulho")) {
+        return {
+          pattern: "dips_bar",
+          title: "Tríceps Mergulho (Banco ou Máquina)",
+          muscles: "Tríceps Braquial (Ênfase Lateral/Longa) • Sinergista: Deltoide Anterior e Peitoral",
+          setup: "Mãos apoiadas na largura dos ombros com dedos para frente e ombros baixos longe das orelhas.",
+          concentric: "Empurre para cima estendendo os cotovelos completamente sem travar secamente no topo.",
+          eccentric: "Desça controladamente com os cotovelos apontando para trás (sem abrir para os lados) até ~90°.",
+          mistakes: "Deixar os ombros projetarem para frente na descida ou afastar o quadril do apoio.",
+          goldenTip: "Mantenha os cotovelos fechados apontando para trás durante toda a execução."
+        };
+      }
+      if (n.includes("frances") || n.includes("testa")) {
+        return {
+          pattern: "triceps_overhead",
+          title: "Extensão de Tríceps Acima da Cabeça / Testa",
+          muscles: "Tríceps Braquial (Máxima ênfase na Cabeça Longa)",
+          setup: "Cotovelos apontados para cima (ou levemente inclinados para trás) e travados na largura dos ombros.",
+          concentric: "Estenda os antebraços acima da cabeça ou à frente mantendo os cotovelos imóveis no espaço.",
+          eccentric: "Desça a carga atrás da cabeça ou em direção à testa/topo da cabeça em 2 a 3 segundos alongando bem a cabeça longa do tríceps.",
+          mistakes: "Abrir demais os cotovelos para os lados ou movimentar os ombros junto com o peso.",
+          goldenTip: "Quanto maior o alongamento atrás da cabeça mantendo os cotovelos fechados, maior a ativação da cabeça longa do tríceps."
+        };
+      }
+      if (n.includes("triceps")) {
         return {
           pattern: "triceps_ext",
-          title: "Extensão de Cotovelos (Isolamento de Tríceps)",
+          title: "Extensão de Cotovelos na Polia (Tríceps)",
           muscles: "Tríceps Braquial (Cabeças Lateral, Longa e Medial)",
-          setup: "Posicione os pés firmes, contraia o abdômen, mantenha o peito aberto e cole os cotovelos na lateral do tronco (ou aponte-os para cima no Tríceps Francês/Testa).",
+          setup: "Posicione os pés firmes, contraia o abdômen, mantenha o peito aberto e cole os cotovelos na lateral do tronco.",
           concentric: "Estenda completamente os antebraços movendo apenas a articulação do cotovelo e aperte o tríceps por 1 segundo no final (na corda, abra as pontas no final).",
           eccentric: "Retorne de forma controlada (2 a 3 segundos) até os antebraços passarem ligeiramente de 90°, mantendo o cotovelo imóvel no espaço.",
           mistakes: "Mover os cotovelos para frente e para trás na subida ou jogar os ombros por cima da barra para empurrar mais peso.",
           goldenTip: "O cotovelo funciona como uma dobradiça presa no lugar: se o ombro mexer junto, você está roubando a tensão do tríceps."
         };
       }
-      if (n.includes("rosca") || n.includes("biceps") || n.includes("punho")) {
+      if (n.includes("rosca") || n.includes("biceps")) {
         return {
           pattern: "bicep_curl",
-          title: "Flexão de Cotovelos (Isolamento de Bíceps / Antebraço)",
+          title: "Flexão de Cotovelos (Isolamento de Bíceps)",
           muscles: "Bíceps Braquial, Braquial Anterior e Braquiorradial",
           setup: "Postura ereta, escápulas estabilizadas para trás, ombros baixos e cotovelos alinhados ao lado das costelas (ou apoiados no banco Scott).",
           concentric: "Suba a carga flexionando exclusivamente os cotovelos até a contração máxima e esprema o bíceps por 1 segundo sem avançar os cotovelos à frente.",
@@ -7474,13 +7610,27 @@
           goldenTip: "Durante toda a subida, mantenha as costas cravadas no banco; se o ombro subir junto com a barra, o deltoide rouba o estímulo do peito."
         };
       }
-      if (n.includes("elevacao") || n.includes("desenvolvimento") || n.includes("arnold") || n.includes("ombro")) {
+      if (n.includes("desenvolvimento") || n.includes("arnold")) {
+        return {
+          pattern: "overhead_press",
+          title: "Desenvolvimento de Ombros (Empurrar Vertical)",
+          muscles: "Deltoide Anterior e Lateral • Sinergista: Tríceps Braquial e Serrátil",
+          setup: "Sentado no banco (ou a 90°/75°), coluna apoiada, abdômen firme e antebraços na vertical alinhados abaixo dos halteres.",
+          concentric: "Empurre os halteres acima da cabeça seguindo o plano escapular (~15°-30° à frente) até quase estender os cotovelos, sem bater os pesos no topo.",
+          eccentric: "Desça controladamente em 2 a 3 segundos até a altura das orelhas/queixo mantendo os cotovelos sempre abaixo dos punhos.",
+          mistakes: "Arquear excessivamente a lombar para empurrar mais carga ou abrir os cotovelos totalmente para trás.",
+          goldenTip: "No Arnold Press, gire os punhos suavemente durante a subida sem jogar os cotovelos para trás da linha dos ombros."
+        };
+      }
+      if (n.includes("elevacao") || n.includes("ombro")) {
         return {
           pattern: "shoulder_raise",
-          title: "Abdução / Desenvolvimento de Ombros (Deltoides)",
-          muscles: "Deltoide Lateral e Deltoide Anterior • Estabilizador: Manguito",
-          setup: "Tronco firme, abdômen contraído e escápulas deprimidas. Na elevação lateral, mantenha os cotovelos quase estendidos com uma leve inclinação dos braços ~15° à frente (plano escapular).",
-          concentric: "Eleve os pesos até a linha dos ombros (90°) na elevação lateral, ou empurre acima da cabeça no desenvolvimento sem bater os halteres.",
+          title: "Elevação de Ombros (Lateral / Frontal)",
+          muscles: n.includes("frontal")
+            ? "Deltoide Anterior • Estabilizador: Core e Serrátil"
+            : "Deltoide Lateral • Estabilizador: Manguito Rotador",
+          setup: "Tronco firme, abdômen contraído, escápulas deprimidas e cotovelos levemente destravados no plano escapular (~15° à frente).",
+          concentric: "Eleve os pesos até a linha dos ombros (90°) conduzindo o movimento pelos cotovelos, sem elevar o trapézio junto.",
           eccentric: "Desça resistindo ao peso por 2 a 3 segundos e pare a cerca de 10 cm da coxa para não perder a tensão no deltoide.",
           mistakes: "Balançar o quadril para jogar o peso para cima ou subir os ombros junto com o trapézio.",
           goldenTip: "Na elevação lateral, pense em jogar os halteres 'para longe das paredes laterais', e não para o teto."
@@ -7498,43 +7648,43 @@
           goldenTip: "O movimento termina assim que o seu quadril para de ir para trás (geralmente no meio da canela); descer além disso só dobra a sua lombar!"
         };
       }
-      if (n.includes("extensora") || n.includes("flexora") || n.includes("flexao de perna")) {
+      if (n.includes("extensora") || n.includes("flexora") || n.includes("flexor") || n.includes("flexao de perna")) {
         return {
           pattern: "knee_isolation",
-          title: "Isolamento de Joelho (Cadeira Extensora / Mesa ou Cadeira Flexora)",
+          title: "Isolamento de Joelho (Extensora / Flexora)",
           muscles: n.includes("extensora")
             ? "Quadríceps Femoral (Reto Femoral, Vasto Lateral, Medial e Intermédio)"
             : "Isquiotibiais (Bíceps Femoral, Semitendíneo e Semimembranáceo)",
           setup: "Alinhe o eixo giratório da máquina exatamente com a linha lateral do seu joelho e posicione o rolo acima do tornozelo. Segure firme nas manoplas colando o quadril no banco.",
           concentric: n.includes("extensora")
             ? "Estenda os joelhos completamente até o topo e segure de 1 a 3 segundos de isometria máxima contraindo o quadríceps."
-            : "Flexione os joelhos trazendo o rolo o máximo possível em direção ao posterior da coxa e segure 1 a 2 segundos na contração.",
+            : "Flexione os joelhos trazendo o rolo/halter o máximo possível em direção ao posterior da coxa e segure 1 a 2 segundos na contração.",
           eccentric: "Retorne a carga lentamente em 3 segundos até o início do movimento sem deixar as placas baterem.",
           mistakes: "Levantar o quadril do banco na mesa/cadeira flexora ou chutar o peso com impulso na extensora.",
           goldenTip: "Segure com força nas alças laterais puxando seu quadril contra o assento: isso aumenta drasticamente a produção de força da coxa."
         };
       }
-      if (n.includes("agachamento") || n.includes("afundo") || n.includes("bulgaro") || n.includes("leg press") || n.includes("hack") || n.includes("passada") || n.includes("recuo")) {
+      if (n.includes("agachamento") || n.includes("hack")) {
         return {
           pattern: "squat_lunge",
-          title: "Agachamento / Pressão de Membros Inferiores",
+          title: "Agachamento (Livre, Smith, Polia, Sumô ou Bola)",
           muscles: "Quadríceps Femoral, Glúteo Máximo e Adutores Magnos",
           setup: "Pés totalmente apoiados (calcanhar, lateral e dedão formando um tripé firme), abdômen pressurizado (bracing) e coluna neutra.",
-          concentric: "Empurre o chão/plataforma com toda a planta do pé mantendo os joelhos alinhados na direção da ponta dos pés.",
-          eccentric: "Desça controladamente flexionando quadril e joelhos até atingir pelo menos 90° (ou a máxima amplitude em que sua pelve continue neutra sem retroverter).",
+          concentric: "Empurre o solo com toda a planta do pé mantendo os joelhos alinhados na direção da ponta dos pés até estender sem travar secamente.",
+          eccentric: "Desça controladamente flexionando quadril e joelhos até atingir pelo menos 90° (ou a máxima amplitude com pelve neutra).",
           mistakes: "Deixar os joelhos caírem para dentro (valgo dinâmico) na subida ou tirar os calcanhares do apoio.",
-          goldenTip: "No Afundo/Búlgaro, concentrar 80% da força no calcanhar da perna da frente evita dor no joelho e maximiza quadríceps e glúteo."
+          goldenTip: "Abra levemente os joelhos para fora acompanhando a ponta dos pés durante toda a descida e subida."
         };
       }
-      if (n.includes("abdominal") || n.includes("obliquo") || n.includes("infra") || n.includes("supra")) {
+      if (n.includes("abdominal") || n.includes("obliquo") || n.includes("supra")) {
         return {
           pattern: "ab_crunch",
           title: "Flexão da Coluna (Isolamento Abdominal)",
           muscles: "Reto Abdominal e Oblíquos Externo/Interno",
-          setup: "Na polia alta ajoelhado ou no solo: posicione a pelve neutra e concentre-se em aproximar as costelas da bacia.",
+          setup: "Na polia alta ajoelhado ou no banco reto: posicione a pelve neutra e concentre-se em aproximar as costelas da bacia.",
           concentric: "Solte todo o ar pela boca enquanto enrola a coluna torácica ('enrolando vértebra por vértebra') e segure 1 segundo espremendo o abdômen.",
           eccentric: "Inspire retornando devagar até alongar a parede abdominal sem perder a tensão.",
-          mistakes: "No abdominal na polia, sentar nos calcanhares mexendo o quadril com a coluna reta; no solo, puxar o pescoço com as mãos.",
+          mistakes: "No abdominal na polia, sentar nos calcanhares mexendo o quadril com a coluna reta; no banco, puxar o pescoço com as mãos.",
           goldenTip: "Se a sua coluna não curvar como um 'C', quem está trabalhando é o flexor do quadril (iliopsoas) e não o abdômen!"
         };
       }
@@ -7543,7 +7693,49 @@
       return SPECIFIC_EXERCISE_GUIDES["pulldown"];
     }
 
-    // Constrói o SVG vetorial animado de acordo com o padrão biomecânico (14 padrões exclusivos!)
+    // Coleção verificada de GIFs animados reais do gifdotreino.com (com fallback automático para SVG 2D offline)
+    function getGifDoTreinoUrl(exName, pattern) {
+      const n = normalizeStr(exName || "");
+      // 34 GIFs verificados do gifdotreino.com (incluindo os 9 enviados diretamente)
+      if (n.includes("flexoes de braco") || n.includes("flexao de braco")) return "https://www.gifdotreino.com/Exercicios/Calistenia/Flex%C3%A3o.gif";
+      if (n.includes("punho")) return "https://www.gifdotreino.com/Exercicios/Antebra%C3%A7os/Flex%C3%A3o%20de%20Punho%20com%20Halteres.gif";
+      if (n.includes("paralela") || n.includes("mergulho")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Paralelas.gif";
+      if (n.includes("pulover") || n.includes("pullover") || n.includes("pull over")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Pullover%20com%20haltere.gif";
+      if (n.includes("crossover")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Cross%20over%20polia%20Alta.gif";
+      if (n.includes("supino inclinado")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif";
+      if (n.includes("supino")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif";
+      if (n.includes("crucifixo") && n.includes("inverso")) return "https://www.gifdotreino.com/Exercicios/Ombros/Crucifixo%20inverso%20unilateral%20com%20cabo.gif";
+      if (n.includes("crucifixo") || n.includes("voador")) return "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo%20com%20halteres.gif";
+      if (n.includes("pulldown")) return "https://www.gifdotreino.com/Exercicios/Costas/Pulldown%20com%20corda.gif";
+      if (n.includes("puxador") || n.includes("pulley frente") || n.includes("barra fixa")) return "https://www.gifdotreino.com/Exercicios/Costas/Puxada%20Alta.gif";
+      if (n.includes("remada alta")) return "https://www.gifdotreino.com/Exercicios/Trap%C3%A9zio/Remada%20Alta%20Com%20Barra%20W.gif";
+      if (n.includes("remada") || n.includes("facepull")) return "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Curvada%20com%20Barra.gif";
+      if (n.includes("encolhimento")) return "https://www.gifdotreino.com/Exercicios/Trap%C3%A9zio/Encolhimento%20com%20Halteres.gif";
+      if (n.includes("desenvolvimento")) return "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20de%20Ombro%20no%20Banco%20com%20Halteres.gif";
+      if (n.includes("elevacao lateral")) return "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20lateral%20alternada%20com%20halteres.gif";
+      if (n.includes("elevacao frontal")) return "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20Alternada%20Com%20Halteres.gif";
+      if (n.includes("scott")) return "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Scott%20com%20Barra%20W.gif";
+      if (n.includes("rosca")) return "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Direta%20com%20Barra.gif";
+      if (n.includes("frances")) return "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Extens%C3%A3o%20de%20tr%C3%ADceps%20com%20haltere%20em%20prona%C3%A7%C3%A3o%20com%20um%20bra%C3%A7o.gif";
+      if (n.includes("testa")) return "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Extens%C3%A3o%20de%20Tr%C3%ADceps%20Testa%20Declinado%20Fechado.gif";
+      if (n.includes("triceps")) return "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20pulley%20corda.gif";
+      if ((n.includes("panturrilha") || n.includes("gemeos")) && n.includes("sentad")) return "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilha%20Sentado%20com%20Alavanca.gif";
+      if (n.includes("panturrilha") || n.includes("gemeos")) return "https://www.gifdotreino.com/Exercicios/Panturrilhas/Panturrilhas%20em%20P%C3%A9.gif";
+      if (n.includes("leg press")) return "https://www.gifdotreino.com/Exercicios/Pernas/Leg%20Press.gif";
+      if (n.includes("extensora")) return "https://www.gifdotreino.com/Exercicios/Pernas/Cadeira%20extensora.gif";
+      if (n.includes("flexora") || n.includes("flexor") || n.includes("flexao de perna")) return "https://www.gifdotreino.com/Exercicios/Pernas/Cadeira%20flexora.gif";
+      if (n.includes("stiff") || n.includes("terra")) return "https://www.gifdotreino.com/Exercicios/Pernas/Stiff%20com%20barra.gif";
+      if (n.includes("agachamento")) return "https://www.gifdotreino.com/Exercicios/Pernas/Agachamento%20Barra.gif";
+      if (n.includes("afundo") || n.includes("bulgaro") || n.includes("avanco") || n.includes("passada")) return "https://www.gifdotreino.com/Exercicios/Pernas/Afundo%20com%20Halteres.gif";
+      if (n.includes("extensao de quadril")) return "https://www.gifdotreino.com/Exercicios/Gl%C3%BAteos/Extens%C3%A3o%20de%20Quadril%20com%20Cabo.gif";
+      if (n.includes("coice na polia") || n.includes("gluteo") || (n.includes("coice") && !n.includes("triceps"))) return "https://www.gifdotreino.com/Exercicios/Gl%C3%BAteos/Gluteos%20Coice%20nilateral%20Polia%20Baixa.gif";
+      if (n.includes("elevacao pelvica")) return "https://www.gifdotreino.com/Exercicios/Gl%C3%BAteos/Eleva%C3%A7%C3%A3o%20P%C3%A9lvica%20Com%20Barra.gif";
+      if (n.includes("abdutora") || n.includes("abducao") || n.includes("adutora")) return "https://www.gifdotreino.com/Exercicios/Gl%C3%BAteos/Abdu%C3%A7%C3%A3o%20Lateral%20do%20Quadril%20com%20Alavanca.gif";
+      if (n.includes("abdominal") || n.includes("canivete") || n.includes("obliquo")) return "https://www.gifdotreino.com/Exercicios/Mobilidade/Contra%C3%A7%C3%A3o%20abdominal.gif";
+      return null;
+    }
+
+    // Constrói a demonstração animada (GIF real gifdotreino.com com fallback automático para SVG 2D)
     function buildBiomechanicsSVG(pattern, exName) {
       const commonDefs = `
         <defs>
@@ -7556,7 +7748,6 @@
             <stop offset="100%" stop-color="#06B6D4"/>
           </linearGradient>
         </defs>
-        <!-- Piso e Grade Técnica -->
         <line x1="20" y1="192" x2="300" y2="192" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/>
         <line x1="40" y1="30" x2="40" y2="192" stroke="#1E293B" stroke-width="1" stroke-dasharray="3 3"/>
         <line x1="160" y1="30" x2="160" y2="192" stroke="#1E293B" stroke-width="1" stroke-dasharray="3 3"/>
@@ -7568,19 +7759,15 @@
       switch (pattern) {
         case "lat_pull":
           illustration = `
-            <!-- Estrutura Polia Alta -->
             <rect x="68" y="20" width="12" height="172" rx="3" fill="#334155"/>
             <line x1="74" y1="24" x2="180" y2="24" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
             <circle cx="175" cy="26" r="6" fill="#F59E0B"/>
-            <!-- Banco e Apoio de Coxa -->
             <rect x="148" y="145" width="48" height="8" rx="3" fill="#475569"/>
             <line x1="172" y1="153" x2="172" y2="192" stroke="#475569" stroke-width="6"/>
-            <!-- Atleta Sentado -->
             <circle cx="176" cy="76" r="11" fill="#94A3B8"/>
             <line x1="175" y1="88" x2="172" y2="145" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
             <line x1="172" y1="145" x2="142" y2="148" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
             <line x1="142" y1="148" x2="142" y2="190" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
-            <!-- Braços e Cabo Animados -->
             <g class="bio-anim-group" style="transform-origin: 175px 96px; animation: bioPullDown var(--bio-duration, 2.6s) ease-in-out infinite;">
               <line x1="175" y1="26" x2="175" y2="62" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="4 2"/>
               <line x1="152" y1="62" x2="198" y2="62" stroke="#E2E8F0" stroke-width="5" stroke-linecap="round"/>
@@ -7593,77 +7780,99 @@
 
         case "straight_pulldown":
           illustration = `
-            <!-- Torre da Polia Alta -->
             <rect x="75" y="20" width="12" height="172" rx="3" fill="#334155"/>
             <circle cx="87" cy="34" r="6" fill="#F59E0B"/>
-            <!-- Atleta em Pé Levemente Inclinado -->
             <circle cx="195" cy="68" r="11" fill="#94A3B8"/>
             <line x1="192" y1="80" x2="205" y2="136" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
             <line x1="205" y1="136" x2="195" y2="190" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
-            <!-- Braço Estendido Descrevendo Arco -->
             <g class="bio-anim-group" style="transform-origin: 192px 86px; animation: bioCurlArm var(--bio-duration, 2.6s) ease-in-out infinite;">
               <line x1="87" y1="34" x2="142" y2="75" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2"/>
               <line x1="192" y1="86" x2="142" y2="75" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
               <circle cx="142" cy="75" r="5" fill="#E2E8F0"/>
             </g>
-            <text x="135" y="48" fill="#10B981" font-size="9" font-weight="bold">ARCO COM BRAÇO ESTENDIDO</text>
+            <text x="125" y="48" fill="#10B981" font-size="9" font-weight="bold">ARCO COM BRAÇO ESTENDIDO</text>
+          `;
+          break;
+
+        case "pullover_arc":
+          illustration = `
+            <rect x="92" y="138" width="135" height="10" rx="4" fill="#475569"/>
+            <line x1="112" y1="148" x2="112" y2="192" stroke="#475569" stroke-width="6"/>
+            <line x1="204" y1="148" x2="204" y2="192" stroke="#475569" stroke-width="6"/>
+            <circle cx="110" cy="124" r="10" fill="#94A3B8"/>
+            <line x1="124" y1="128" x2="196" y2="128" stroke="url(#muscleActiveGrad)" stroke-width="13" stroke-linecap="round" class="bio-muscle-pulse"/>
+            <line x1="196" y1="128" x2="228" y2="145" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
+            <line x1="228" y1="145" x2="228" y2="190" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+            <g class="bio-anim-group" style="transform-origin: 138px 125px; animation: bioPulloverArc var(--bio-duration, 2.8s) ease-in-out infinite;">
+              <line x1="138" y1="125" x2="138" y2="70" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
+              <rect x="128" y="60" width="20" height="12" rx="4" fill="#F59E0B"/>
+            </g>
+            <path d="M 85 78 Q 112 52 145 64" fill="none" stroke="#10B981" stroke-width="1.8" stroke-dasharray="4 3"/>
+            <text x="108" y="42" fill="#10B981" font-size="9" font-weight="bold">ARCO DO PULÔVER (DORSAL/PEITO)</text>
+          `;
+          break;
+
+        case "dips_bar":
+          illustration = `
+            <line x1="115" y1="88" x2="115" y2="192" stroke="#475569" stroke-width="6"/>
+            <line x1="205" y1="88" x2="205" y2="192" stroke="#475569" stroke-width="6"/>
+            <line x1="100" y1="88" x2="220" y2="88" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+            <g class="bio-anim-group" style="animation: bioDipMove var(--bio-duration, 2.5s) ease-in-out infinite;">
+              <circle cx="160" cy="48" r="11" fill="#94A3B8"/>
+              <rect x="145" y="62" width="30" height="54" rx="8" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
+              <line x1="148" y1="68" x2="115" y2="88" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
+              <line x1="172" y1="68" x2="205" y2="88" stroke="#06B6D4" stroke-width="7" stroke-linecap="round"/>
+              <line x1="152" y1="116" x2="152" y2="158" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+              <line x1="168" y1="116" x2="168" y2="158" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+            </g>
+            <text x="95" y="28" fill="#10B981" font-size="9" font-weight="bold">PARALELAS / MERGULHO (OMBROS BAIXOS)</text>
           `;
           break;
 
         case "horizontal_row":
           illustration = `
-            <!-- Torre Polia / Ponto de Tração -->
             <rect x="62" y="40" width="12" height="152" rx="3" fill="#334155"/>
             <circle cx="76" cy="118" r="6" fill="#F59E0B"/>
-            <!-- Atleta Posicionado -->
             <circle cx="195" cy="74" r="11" fill="#94A3B8"/>
             <line x1="195" y1="86" x2="195" y2="145" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
             <line x1="195" y1="145" x2="130" y2="145" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
             <line x1="130" y1="145" x2="115" y2="188" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
-            <!-- Cabo e Braço Puxando Horizontalmente -->
             <g class="bio-anim-group" style="animation: bioRowBack var(--bio-duration, 2.6s) ease-in-out infinite;">
               <line x1="76" y1="118" x2="162" y2="118" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="4 2"/>
               <polygon points="158,110 158,126 168,118" fill="#E2E8F0"/>
               <line x1="195" y1="96" x2="164" y2="118" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
             </g>
-            <text x="140" y="60" fill="#10B981" font-size="9" font-weight="bold">RETRAÇÃO ESCAPULAR</text>
+            <text x="130" y="55" fill="#10B981" font-size="9" font-weight="bold">RETRAÇÃO ESCAPULAR</text>
           `;
           break;
 
         case "chest_press":
           illustration = `
-            <!-- Banco de Supino -->
             <rect x="95" y="138" width="135" height="10" rx="4" fill="#475569"/>
             <line x1="115" y1="148" x2="115" y2="192" stroke="#475569" stroke-width="6"/>
             <line x1="205" y1="148" x2="205" y2="192" stroke="#475569" stroke-width="6"/>
-            <!-- Atleta Deitado -->
             <circle cx="112" cy="124" r="10" fill="#94A3B8"/>
             <line x1="126" y1="128" x2="198" y2="128" stroke="url(#muscleActiveGrad)" stroke-width="13" stroke-linecap="round" class="bio-muscle-pulse"/>
             <line x1="198" y1="128" x2="232" y2="145" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
             <line x1="232" y1="145" x2="232" y2="190" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
-            <!-- Braço e Carga Subindo -->
             <g class="bio-anim-group" style="animation: bioPressUp var(--bio-duration, 2.6s) ease-in-out infinite;">
               <line x1="145" y1="125" x2="145" y2="75" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
               <rect x="128" y="64" width="34" height="12" rx="4" fill="#F59E0B"/>
               <circle cx="145" cy="70" r="3" fill="#FFF"/>
             </g>
-            <text x="115" y="45" fill="#10B981" font-size="9" font-weight="bold">ESCÁPULAS TRAVADAS NO APOIO</text>
+            <text x="108" y="45" fill="#10B981" font-size="9" font-weight="bold">ESCÁPULAS TRAVADAS NO APOIO</text>
           `;
           break;
 
         case "chest_fly":
           illustration = `
-            <!-- Visão Superior do Arco de Crucifixo / Crossover -->
             <rect x="142" y="75" width="36" height="85" rx="8" fill="#334155"/>
             <circle cx="160" cy="64" r="12" fill="#94A3B8"/>
-            <!-- Peitoral Ativo no Centro -->
             <ellipse cx="160" cy="96" rx="22" ry="11" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
-            <!-- Braço Esquerdo Fazendo Arco -->
             <g class="bio-anim-group" style="transform-origin: 140px 96px; animation: bioSwingArm var(--bio-duration, 2.6s) ease-in-out infinite;">
               <path d="M 140 96 Q 105 88 92 108" fill="none" stroke="#10B981" stroke-width="8" stroke-linecap="round"/>
               <circle cx="92" cy="108" r="7" fill="#F59E0B"/>
             </g>
-            <!-- Braço Direito Fazendo Arco -->
             <g class="bio-anim-group" style="transform-origin: 180px 96px; animation: bioCurlArm var(--bio-duration, 2.6s) ease-in-out infinite;">
               <path d="M 180 96 Q 215 88 228 108" fill="none" stroke="#06B6D4" stroke-width="8" stroke-linecap="round"/>
               <circle cx="228" cy="108" r="7" fill="#F59E0B"/>
@@ -7675,15 +7884,12 @@
 
         case "bicep_curl":
           illustration = `
-            <!-- Atleta em Pé -->
             <circle cx="160" cy="54" r="12" fill="#94A3B8"/>
             <line x1="160" y1="68" x2="160" y2="132" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
             <line x1="160" y1="132" x2="152" y2="190" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
             <line x1="160" y1="132" x2="170" y2="190" stroke="#475569" stroke-width="9" stroke-linecap="round"/>
-            <!-- Braço Fixo (Bíceps) -->
             <line x1="160" y1="76" x2="160" y2="112" stroke="url(#muscleActiveGrad)" stroke-width="9" stroke-linecap="round" class="bio-muscle-pulse"/>
             <circle cx="160" cy="112" r="8" fill="url(#jointGlow)"/>
-            <!-- Antebraço Fazendo Arco de Rosca -->
             <g class="bio-anim-group" style="transform-origin: 160px 112px; animation: bioCurlArm var(--bio-duration, 2.4s) ease-in-out infinite;">
               <line x1="160" y1="112" x2="198" y2="132" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
               <circle cx="202" cy="134" r="8" fill="#F59E0B"/>
@@ -7692,19 +7898,30 @@
           `;
           break;
 
+        case "wrist_curl":
+          illustration = `
+            <rect x="82" y="138" width="96" height="12" rx="4" fill="#475569"/>
+            <line x1="102" y1="150" x2="102" y2="192" stroke="#475569" stroke-width="6"/>
+            <line x1="158" y1="150" x2="158" y2="192" stroke="#475569" stroke-width="6"/>
+            <line x1="92" y1="130" x2="176" y2="130" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
+            <circle cx="176" cy="130" r="7" fill="url(#jointGlow)"/>
+            <g class="bio-anim-group" style="transform-origin: 176px 130px; animation: bioWristFlex var(--bio-duration, 2.0s) ease-in-out infinite;">
+              <line x1="176" y1="130" x2="210" y2="130" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
+              <circle cx="212" cy="130" r="8" fill="#F59E0B"/>
+            </g>
+            <text x="90" y="88" fill="#10B981" font-size="9" font-weight="bold">FLEXÃO COMPLETA DO PUNHO</text>
+          `;
+          break;
+
         case "triceps_ext":
           illustration = `
-            <!-- Torre da Polia -->
             <rect x="218" y="25" width="12" height="167" rx="3" fill="#334155"/>
             <circle cx="212" cy="36" r="6" fill="#F59E0B"/>
-            <!-- Atleta em Pé -->
             <circle cx="145" cy="54" r="12" fill="#94A3B8"/>
             <line x1="145" y1="68" x2="145" y2="132" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
             <line x1="145" y1="132" x2="140" y2="190" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
-            <!-- Braço Superior Fixo (Tríceps) -->
             <line x1="145" y1="74" x2="148" y2="110" stroke="url(#muscleActiveGrad)" stroke-width="9" stroke-linecap="round" class="bio-muscle-pulse"/>
             <circle cx="148" cy="110" r="7" fill="url(#jointGlow)"/>
-            <!-- Antebraço Estendendo para Baixo -->
             <g class="bio-anim-group" style="transform-origin: 148px 110px; animation: bioTricepsExt var(--bio-duration, 2.4s) ease-in-out infinite;">
               <line x1="148" y1="110" x2="184" y2="96" stroke="#06B6D4" stroke-width="7" stroke-linecap="round"/>
               <line x1="212" y1="36" x2="184" y2="96" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2"/>
@@ -7714,37 +7931,65 @@
           `;
           break;
 
+        case "triceps_overhead":
+          illustration = `
+            <rect x="136" y="138" width="48" height="10" rx="4" fill="#475569"/>
+            <line x1="160" y1="148" x2="160" y2="192" stroke="#475569" stroke-width="6"/>
+            <circle cx="160" cy="68" r="11" fill="#94A3B8"/>
+            <line x1="160" y1="80" x2="160" y2="138" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
+            <line x1="160" y1="88" x2="160" y2="52" stroke="url(#muscleActiveGrad)" stroke-width="9" stroke-linecap="round" class="bio-muscle-pulse"/>
+            <circle cx="160" cy="52" r="7" fill="url(#jointGlow)"/>
+            <g class="bio-anim-group" style="transform-origin: 160px 52px; animation: bioTricepsExt var(--bio-duration, 2.4s) ease-in-out infinite;">
+              <line x1="160" y1="52" x2="128" y2="62" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
+              <circle cx="124" cy="64" r="8" fill="#F59E0B"/>
+            </g>
+            <text x="88" y="28" fill="#10B981" font-size="9" font-weight="bold">COTOVELOS APONTADOS P/ CIMA</text>
+          `;
+          break;
+
         case "shoulder_raise":
           illustration = `
-            <!-- Atleta Visão Frontal -->
             <circle cx="160" cy="54" r="12" fill="#94A3B8"/>
             <rect x="144" y="70" width="32" height="60" rx="8" fill="#475569"/>
             <line x1="150" y1="130" x2="146" y2="190" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
             <line x1="170" y1="130" x2="174" y2="190" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
-            <!-- Deltoides Destacados -->
             <circle cx="142" cy="76" r="8" fill="#10B981" class="bio-muscle-pulse"/>
             <circle cx="178" cy="76" r="8" fill="#10B981" class="bio-muscle-pulse"/>
-            <!-- Braço Esquerdo -->
             <g class="bio-anim-group" style="transform-origin: 142px 76px; animation: bioSwingArm var(--bio-duration, 2.5s) ease-in-out infinite;">
               <line x1="142" y1="76" x2="128" y2="125" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
               <rect x="120" y="122" width="14" height="8" rx="2" fill="#F59E0B"/>
             </g>
-            <!-- Braço Direito -->
             <g class="bio-anim-group" style="transform-origin: 178px 76px; animation: bioCurlArm var(--bio-duration, 2.5s) ease-in-out infinite;">
               <line x1="178" y1="76" x2="192" y2="125" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
               <rect x="186" y="122" width="14" height="8" rx="2" fill="#F59E0B"/>
             </g>
-            <text x="115" y="36" fill="#10B981" font-size="9" font-weight="bold">LINHA DE 90° DOS OMBROS</text>
+            <text x="110" y="34" fill="#10B981" font-size="9" font-weight="bold">LINHA DE 90° DOS OMBROS</text>
+          `;
+          break;
+
+        case "overhead_press":
+          illustration = `
+            <rect x="136" y="138" width="48" height="10" rx="4" fill="#475569"/>
+            <line x1="160" y1="148" x2="160" y2="192" stroke="#475569" stroke-width="6"/>
+            <circle cx="160" cy="68" r="11" fill="#94A3B8"/>
+            <rect x="144" y="82" width="32" height="56" rx="8" fill="#475569"/>
+            <circle cx="142" cy="88" r="8" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
+            <circle cx="178" cy="88" r="8" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
+            <g class="bio-anim-group" style="animation: bioOverheadPress var(--bio-duration, 2.5s) ease-in-out infinite;">
+              <line x1="142" y1="88" x2="128" y2="54" stroke="#10B981" stroke-width="7" stroke-linecap="round"/>
+              <line x1="178" y1="88" x2="192" y2="54" stroke="#06B6D4" stroke-width="7" stroke-linecap="round"/>
+              <rect x="116" y="46" width="24" height="10" rx="3" fill="#F59E0B"/>
+              <rect x="180" y="46" width="24" height="10" rx="3" fill="#F59E0B"/>
+            </g>
+            <text x="102" y="24" fill="#10B981" font-size="9" font-weight="bold">EMPURRAR VERTICAL ACIMA DA CABEÇA</text>
           `;
           break;
 
         case "hip_hinge":
           illustration = `
-            <!-- Pernas Semiflexionadas Fixas -->
             <line x1="155" y1="122" x2="162" y2="156" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
             <line x1="162" y1="156" x2="158" y2="190" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
             <circle cx="155" cy="122" r="9" fill="url(#jointGlow)"/>
-            <!-- Tronco e Braços Inclinando Pelo Quadril -->
             <g class="bio-anim-group" style="transform-origin: 155px 122px; animation: bioHingeBody var(--bio-duration, 2.8s) ease-in-out infinite;">
               <line x1="155" y1="122" x2="162" y2="68" stroke="#10B981" stroke-width="12" stroke-linecap="round"/>
               <circle cx="165" cy="54" r="11" fill="#94A3B8"/>
@@ -7757,36 +8002,93 @@
 
         case "glute_dominant":
           illustration = `
-            <!-- Banco de Apoio Escapular -->
             <rect x="65" y="122" width="46" height="68" rx="6" fill="#334155"/>
-            <!-- Perna Firme em 90 Graus -->
             <line x1="212" y1="128" x2="212" y2="190" stroke="#64748B" stroke-width="10" stroke-linecap="round"/>
-            <!-- Tronco + Pelve + Coxa Subindo em Bloco (Elevação Pélvica / Extensão Quadril) -->
             <g class="bio-anim-group" style="transform-origin: 105px 124px; animation: bioPressUp var(--bio-duration, 2.6s) ease-in-out infinite;">
               <circle cx="88" cy="108" r="10" fill="#94A3B8"/>
               <line x1="102" y1="124" x2="164" y2="128" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
-              <!-- Glúteo Ativo e Barra no Quadril -->
               <circle cx="164" cy="130" r="12" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
               <circle cx="164" cy="116" r="8" fill="#F59E0B"/>
               <line x1="164" y1="128" x2="212" y2="128" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round"/>
             </g>
-            <text x="115" y="54" fill="#10B981" font-size="9" font-weight="bold">CONTRAÇÃO DE PICO NO GLÚTEO</text>
+            <text x="108" y="54" fill="#10B981" font-size="9" font-weight="bold">CONTRAÇÃO DE PICO NO GLÚTEO</text>
+          `;
+          break;
+
+        case "kickback_cable":
+          illustration = `
+            <rect x="75" y="25" width="12" height="167" rx="3" fill="#334155"/>
+            <circle cx="87" cy="176" r="6" fill="#F59E0B"/>
+            <circle cx="148" cy="60" r="11" fill="#94A3B8"/>
+            <line x1="142" y1="72" x2="162" y2="122" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
+            <line x1="138" y1="80" x2="92" y2="95" stroke="#64748B" stroke-width="6" stroke-linecap="round"/>
+            <line x1="162" y1="122" x2="156" y2="190" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
+            <circle cx="162" cy="122" r="11" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
+            <g class="bio-anim-group" style="transform-origin: 162px 122px; animation: bioKickBack var(--bio-duration, 2.4s) ease-in-out infinite;">
+              <line x1="162" y1="122" x2="188" y2="184" stroke="#10B981" stroke-width="9" stroke-linecap="round"/>
+              <line x1="87" y1="176" x2="188" y2="180" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2"/>
+              <circle cx="188" cy="182" r="6" fill="#F59E0B"/>
+            </g>
+            <text x="172" y="95" fill="#10B981" font-size="9" font-weight="bold">EXTENSÃO DE QUADRIL (~30°)</text>
+          `;
+          break;
+
+        case "abductor_adductor":
+          illustration = `
+            <rect x="115" y="138" width="90" height="12" rx="4" fill="#475569"/>
+            <circle cx="160" cy="60" r="12" fill="#94A3B8"/>
+            <rect x="142" y="76" width="36" height="58" rx="8" fill="#475569"/>
+            <ellipse cx="160" cy="134" rx="22" ry="10" fill="url(#muscleActiveGrad)" class="bio-muscle-pulse"/>
+            <g class="bio-anim-group" style="animation: bioAbductOpenL var(--bio-duration, 2.4s) ease-in-out infinite;">
+              <line x1="145" y1="138" x2="132" y2="188" stroke="#10B981" stroke-width="10" stroke-linecap="round"/>
+              <rect x="122" y="156" width="8" height="22" rx="3" fill="#F59E0B"/>
+            </g>
+            <g class="bio-anim-group" style="animation: bioAbductOpen var(--bio-duration, 2.4s) ease-in-out infinite;">
+              <line x1="175" y1="138" x2="188" y2="188" stroke="#06B6D4" stroke-width="10" stroke-linecap="round"/>
+              <rect x="190" y="156" width="8" height="22" rx="3" fill="#F59E0B"/>
+            </g>
+            <text x="102" y="34" fill="#10B981" font-size="9" font-weight="bold">CONTROLE TOTAL NA ABERTURA/FECHO</text>
+          `;
+          break;
+
+        case "leg_press":
+          illustration = `
+            <line x1="110" y1="174" x2="230" y2="66" stroke="#334155" stroke-width="8" stroke-linecap="round"/>
+            <rect x="76" y="138" width="58" height="14" rx="4" fill="#475569"/>
+            <circle cx="76" cy="124" r="11" fill="#94A3B8"/>
+            <line x1="86" y1="134" x2="122" y2="144" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
+            <g class="bio-anim-group" style="animation: bioLegPressPush var(--bio-duration, 2.6s) ease-in-out infinite;">
+              <line x1="122" y1="144" x2="162" y2="110" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
+              <line x1="162" y1="110" x2="196" y2="82" stroke="#10B981" stroke-width="9" stroke-linecap="round"/>
+              <line x1="186" y1="68" x2="210" y2="92" stroke="#F59E0B" stroke-width="8" stroke-linecap="round"/>
+            </g>
+            <text x="86" y="42" fill="#10B981" font-size="9" font-weight="bold">EMPURRE PELO CALCANHAR (SEM TRAVAR)</text>
+          `;
+          break;
+
+        case "lunge_split":
+          illustration = `
+            <circle cx="152" cy="48" r="11" fill="#94A3B8"/>
+            <g class="bio-anim-group" style="animation: bioSquatBody var(--bio-duration, 2.8s) ease-in-out infinite;">
+              <line x1="152" y1="62" x2="152" y2="120" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
+              <line x1="152" y1="120" x2="192" y2="146" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
+              <line x1="192" y1="146" x2="192" y2="190" stroke="#10B981" stroke-width="9" stroke-linecap="round"/>
+              <line x1="152" y1="120" x2="112" y2="152" stroke="#64748B" stroke-width="10" stroke-linecap="round"/>
+              <line x1="112" y1="152" x2="96" y2="188" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
+            </g>
+            <text x="102" y="28" fill="#10B981" font-size="9" font-weight="bold">FORÇA NO CALCANHAR DA FRENTE</text>
           `;
           break;
 
         case "knee_isolation":
           illustration = `
-            <!-- Cadeira Extensora / Flexora -->
             <rect x="108" y="80" width="12" height="58" rx="4" fill="#475569"/>
             <rect x="108" y="132" width="58" height="10" rx="4" fill="#475569"/>
             <line x1="125" y1="142" x2="125" y2="192" stroke="#475569" stroke-width="6"/>
-            <!-- Atleta Sentado -->
             <circle cx="128" cy="64" r="11" fill="#94A3B8"/>
             <line x1="126" y1="78" x2="126" y2="130" stroke="#64748B" stroke-width="12" stroke-linecap="round"/>
-            <!-- Coxa Fixa Ativa -->
             <line x1="126" y1="130" x2="174" y2="130" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
             <circle cx="174" cy="130" r="8" fill="url(#jointGlow)"/>
-            <!-- Perna Movendo no Eixo do Joelho -->
             <g class="bio-anim-group" style="transform-origin: 174px 130px; animation: bioKneeExt var(--bio-duration, 2.5s) ease-in-out infinite;">
               <line x1="174" y1="130" x2="178" y2="182" stroke="#10B981" stroke-width="9" stroke-linecap="round"/>
               <circle cx="182" cy="176" r="7" fill="#F59E0B"/>
@@ -7797,33 +8099,25 @@
 
         case "calf_raise":
           illustration = `
-            <!-- Degrau / Step da Plataforma -->
             <rect x="122" y="176" width="58" height="16" rx="3" fill="#475569"/>
-            <!-- Atleta Subindo na Ponta do Pé -->
             <g class="bio-anim-group" style="animation: bioPressUp var(--bio-duration, 2.2s) ease-in-out infinite;">
               <circle cx="160" cy="48" r="11" fill="#94A3B8"/>
               <line x1="160" y1="62" x2="160" y2="118" stroke="#64748B" stroke-width="12" stroke-linecap="round"/>
-              <!-- Gastrocnêmio / Sóleo em Destaque -->
               <line x1="160" y1="118" x2="160" y2="168" stroke="url(#muscleActiveGrad)" stroke-width="11" stroke-linecap="round" class="bio-muscle-pulse"/>
-              <!-- Pé Apoiado na Ponta -->
               <line x1="146" y1="174" x2="176" y2="166" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
             </g>
-            <text x="95" y="34" fill="#10B981" font-size="9" font-weight="bold">PAUSA 1S EM CIMA E 1S EMBAIXO</text>
+            <text x="90" y="34" fill="#10B981" font-size="9" font-weight="bold">PAUSA 1S EM CIMA E 1S EMBAIXO</text>
           `;
           break;
 
         case "core_iso":
           illustration = `
-            <!-- Posição de Prancha / Estabilização Lombar e Core -->
             <g class="bio-anim-group" style="animation: bioMusclePulse 1.8s ease-in-out infinite;">
               <circle cx="228" cy="128" r="10" fill="#94A3B8"/>
-              <!-- Linha Reta Perfeita Tronco-Quadril-Pernas -->
               <line x1="216" y1="134" x2="148" y2="146" stroke="url(#muscleActiveGrad)" stroke-width="13" stroke-linecap="round"/>
               <line x1="148" y1="146" x2="82" y2="162" stroke="#10B981" stroke-width="10" stroke-linecap="round"/>
-              <!-- Antebraço Apoiado no Solo -->
               <line x1="210" y1="136" x2="210" y2="186" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
               <line x1="210" y1="186" x2="232" y2="186" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
-              <!-- Ponta dos Pés no Solo -->
               <line x1="82" y1="162" x2="82" y2="188" stroke="#64748B" stroke-width="7" stroke-linecap="round"/>
             </g>
             <line x1="78" y1="118" x2="235" y2="96" stroke="#10B981" stroke-width="1.5" stroke-dasharray="4 3"/>
@@ -7831,30 +8125,39 @@
           `;
           break;
 
+        case "ab_leg_raise":
+          illustration = `
+            <rect x="65" y="168" width="190" height="10" rx="4" fill="#334155"/>
+            <circle cx="96" cy="152" r="10" fill="#94A3B8"/>
+            <line x1="108" y1="158" x2="164" y2="158" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
+            <circle cx="164" cy="158" r="7" fill="url(#jointGlow)"/>
+            <g class="bio-anim-group" style="transform-origin: 164px 158px; animation: bioLegRaise var(--bio-duration, 2.4s) ease-in-out infinite;">
+              <line x1="164" y1="158" x2="232" y2="158" stroke="#10B981" stroke-width="10" stroke-linecap="round"/>
+              <circle cx="234" cy="158" r="5" fill="#F59E0B"/>
+            </g>
+            <text x="90" y="76" fill="#10B981" font-size="9" font-weight="bold">ELEVAÇÃO CONTROLADA (LOMBAR FIXA)</text>
+          `;
+          break;
+
         case "ab_crunch":
           illustration = `
-            <!-- Polia Alta Abdominal -->
             <rect x="78" y="25" width="10" height="167" rx="3" fill="#334155"/>
             <circle cx="92" cy="36" r="6" fill="#F59E0B"/>
-            <!-- Pernas Ajoelhadas no Solo -->
             <line x1="165" y1="145" x2="165" y2="188" stroke="#64748B" stroke-width="10" stroke-linecap="round"/>
             <line x1="165" y1="188" x2="205" y2="188" stroke="#64748B" stroke-width="8" stroke-linecap="round"/>
-            <!-- Tronco Curvando (Flexão Torácica) -->
             <g class="bio-anim-group" style="transform-origin: 165px 145px; animation: bioCurlArm var(--bio-duration, 2.4s) ease-in-out infinite;">
               <line x1="165" y1="145" x2="158" y2="90" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
               <circle cx="155" cy="74" r="11" fill="#94A3B8"/>
               <line x1="92" y1="36" x2="145" y2="76" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 2"/>
             </g>
-            <text x="155" y="52" fill="#10B981" font-size="9" font-weight="bold">CURVAR A COLUNA (ENROLAR)</text>
+            <text x="148" y="52" fill="#10B981" font-size="9" font-weight="bold">CURVAR A COLUNA (ENROLAR)</text>
           `;
           break;
 
         case "squat_lunge":
         default:
           illustration = `
-            <!-- Perna Inferior / Tíbia -->
             <line x1="158" y1="190" x2="146" y2="142" stroke="#64748B" stroke-width="9" stroke-linecap="round"/>
-            <!-- Parte Superior que Agacha -->
             <g class="bio-anim-group" style="transform-origin: 146px 142px; animation: bioSquatBody var(--bio-duration, 2.8s) ease-in-out infinite;">
               <line x1="146" y1="142" x2="176" y2="112" stroke="url(#muscleActiveGrad)" stroke-width="12" stroke-linecap="round" class="bio-muscle-pulse"/>
               <line x1="176" y1="112" x2="164" y2="58" stroke="#475569" stroke-width="12" stroke-linecap="round"/>
@@ -7866,18 +8169,30 @@
           break;
       }
 
-      return `
+      const svgMarkup = `
         <svg viewBox="0 0 320 210" class="w-full h-full max-h-[220px] select-none">
           ${commonDefs}
           ${illustration}
         </svg>
       `;
+      const gifUrl = getGifDoTreinoUrl(exName, pattern);
+      if (gifUrl) {
+        const safeAlt = String(exName || pattern || "Exercício").replace(/"/g, "&quot;");
+        return `
+          <div class="w-full flex flex-col items-center justify-center gap-1">
+            <img src="${gifUrl}" alt="${safeAlt}" loading="lazy" referrerpolicy="no-referrer" class="w-full h-[205px] object-contain rounded-xl bg-white p-1.5 shadow-inner" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.classList.remove('hidden');" />
+            <div class="hidden w-full">${svgMarkup}</div>
+            <span class="text-[10px] text-slate-400 font-semibold">GIF animado • gifdotreino.com</span>
+          </div>
+        `;
+      }
+      return svgMarkup;
     }
 
     /*************************************************************************
      * 14B. LÓGICA DO MODAL DE DEMONSTRAÇÃO (ANIMAÇÃO 2D + VÍDEO YOUTUBE + PASSO A PASSO)
      *************************************************************************/
-    let activeDemoExercise = { name: "", muscle: "", equip: "", patternKey: "squat_lunge", videoUrl: "" };
+    let activeDemoExercise = { name: "", muscle: "", equip: "", patternKey: "squat_lunge", videoUrl: "", bisetParts: [] };
 
     function extractYoutubeId(url) {
       if (!url) return null;
@@ -7885,11 +8200,26 @@
       return match ? match[1] : null;
     }
 
-    function openDemoModal(exerciseName, muscleGroup = "Costas", equipName = "Polia") {
-      // Remove prefixo numérico se houver (ex: "49 - Rosca Scott na Polia")
-      const cleanName = exerciseName.replace(/^\d+\s*-\s*/, "").trim();
-      // Guia técnico específico do exercício (procedimento, erros comuns, dica) + padrão do simulador 2D
-      const guide = getBiomechanicsProfile(cleanName);
+    function resolveOfficialVideoUrl(cleanName) {
+      if (!appState.customVideos) appState.customVideos = {};
+      if (appState.customVideos[cleanName]) {
+        return { url: appState.customVideos[cleanName], isCustom: true };
+      }
+      const normTarget = normalizeStr(cleanName);
+      const exactKey = Object.keys(OFFICIAL_BALESTRIN_VIDEOS).find(
+        k => normalizeStr(k) === normTarget
+      );
+      if (exactKey) return { url: OFFICIAL_BALESTRIN_VIDEOS[exactKey], isCustom: false };
+
+      const sortedKeys = Object.keys(OFFICIAL_BALESTRIN_VIDEOS).sort((a, b) => b.length - a.length);
+      const foundKey = sortedKeys.find(
+        k => normTarget.includes(normalizeStr(k)) || normalizeStr(k).includes(normTarget)
+      );
+      return { url: foundKey ? OFFICIAL_BALESTRIN_VIDEOS[foundKey] : "", isCustom: false };
+    }
+
+    function applyDemoTargetExercise(targetName, muscleGroup, equipName) {
+      const guide = getBiomechanicsProfile(targetName);
       const patternKey = guide.pattern;
       const muscleParts = String(guide.muscles || "").split(" • ");
       const profile = {
@@ -7904,60 +8234,32 @@
         mistakes: guide.mistakes
       };
 
-      // Verifica se há dica personalizada nos 50 exercícios
-      const match50 = EXERCISES_50.find(e => e.name.toLowerCase() === cleanName.toLowerCase());
-      const customTip = match50 ? match50.tip : `Execute "${cleanName}" mantendo controle total na fase excêntrica e máxima contração concêntrica.`;
+      const match50 = EXERCISES_50.find(e => normalizeStr(e.name) === normalizeStr(targetName));
+      const customTip = match50 ? match50.tip : `Execute "${targetName}" mantendo controle total na fase excêntrica e máxima contração concêntrica.`;
+      const vidRes = resolveOfficialVideoUrl(targetName);
 
-      // 1º Prioridade: Vídeo personalizado salvo pelo próprio usuário
-      if (!appState.customVideos) appState.customVideos = {};
-      let officialUrl = appState.customVideos[cleanName] || "";
+      activeDemoExercise.name = targetName;
+      activeDemoExercise.muscle = muscleGroup;
+      activeDemoExercise.equip = equipName;
+      activeDemoExercise.patternKey = patternKey;
+      activeDemoExercise.videoUrl = vidRes.url;
 
-      // 2º Prioridade: Correspondência exata (case-insensitive) na tabela de vídeos verificados
-      if (!officialUrl) {
-        const exactKey = Object.keys(OFFICIAL_BALESTRIN_VIDEOS).find(
-          k => k.toLowerCase() === cleanName.toLowerCase()
-        );
-        if (exactKey) officialUrl = OFFICIAL_BALESTRIN_VIDEOS[exactKey];
-      }
-
-      // 3º Prioridade: Correspondência parcial da chave mais específica (maior comprimento) para evitar colisões
-      if (!officialUrl) {
-        const sortedKeys = Object.keys(OFFICIAL_BALESTRIN_VIDEOS).sort((a, b) => b.length - a.length);
-        const foundKey = sortedKeys.find(
-          k => cleanName.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(cleanName.toLowerCase())
-        );
-        if (foundKey) officialUrl = OFFICIAL_BALESTRIN_VIDEOS[foundKey];
-      }
-
-      activeDemoExercise = {
-        name: cleanName,
-        muscle: muscleGroup,
-        equip: equipName,
-        patternKey,
-        videoUrl: officialUrl
-      };
-
-      // Atualiza badge se o usuário tiver personalizado o vídeo
       const sourceBadge = document.getElementById("demoVideoSourceBadge");
       if (sourceBadge) {
-        sourceBadge.textContent = appState.customVideos[cleanName]
+        sourceBadge.textContent = vidRes.isCustom
           ? "Vídeo Personalizado pelo Usuário • YouTube"
           : "Vídeo Verificado do Exercício • YouTube";
       }
 
-      // Esconde editor de link customizado ao abrir e preenche com a URL atual
       const editorBox = document.getElementById("customVideoEditorBox");
       const urlInput = document.getElementById("customVideoUrlInput");
       if (editorBox) editorBox.classList.add("hidden");
-      if (urlInput) urlInput.value = officialUrl || "";
+      if (urlInput) urlInput.value = vidRes.url || "";
 
-      // Atualiza cabeçalho e badges
-      document.getElementById("demoModalTitle").textContent = cleanName;
       document.getElementById("demoModalBadgeMuscle").textContent = muscleGroup;
       document.getElementById("demoModalBadgeEquip").textContent = equipName;
       document.getElementById("demoModalBadgePattern").textContent = profile.patternLabel;
 
-      // Atualiza textos anatômicos e checklist de 4 passos
       document.getElementById("demoPrimaryMuscle").textContent = profile.primary;
       document.getElementById("demoSecondaryMuscle").textContent = profile.secondary;
       document.getElementById("demoGoldenTip").textContent = `"${guide.goldenTip || customTip}"`;
@@ -7966,18 +8268,64 @@
       document.getElementById("demoStepConcentric").textContent = profile.concentric;
       document.getElementById("demoStepEccentric").textContent = profile.eccentric;
       document.getElementById("demoStepMistakes").textContent = profile.mistakes;
+    }
+
+    function switchDemoBisetPart(idx) {
+      const parts = activeDemoExercise.bisetParts || [];
+      if (!parts[idx]) return;
+      applyDemoTargetExercise(parts[idx], activeDemoExercise.muscle, activeDemoExercise.equip);
+      document.getElementById("demoSvgContainer").innerHTML = buildBiomechanicsSVG(activeDemoExercise.patternKey, parts[idx]);
+      const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent("como fazer " + parts[idx] + " execucao correta")}`;
+      document.getElementById("demoYoutubeSearchLink").href = searchUrl;
+      document.getElementById("demoYoutubeDirectLink").href = activeDemoExercise.videoUrl || searchUrl;
+      const vidSec = document.getElementById("demoViewVideo");
+      if (vidSec && !vidSec.classList.contains("hidden")) { switchDemoView("video"); }
+      document.querySelectorAll(".demo-biset-btn").forEach((btn, i) => {
+        if (i === idx) {
+          btn.className = "demo-biset-btn flex-1 px-2.5 py-1.5 rounded-lg bg-neonGreen text-bgMain font-bold text-[11px] truncate transition";
+        } else {
+          btn.className = "demo-biset-btn flex-1 px-2.5 py-1.5 rounded-lg bg-bgMain text-slate-300 border border-borderSubtle font-semibold text-[11px] truncate hover:text-white transition";
+        }
+      });
+    }
+
+    function openDemoModal(exerciseName, muscleGroup = "Costas", equipName = "Polia") {
+      const cleanName = exerciseName.replace(/^\d+\s*-\s*/, "").trim();
+      const bisetParts = cleanName.includes(" + ")
+        ? cleanName.split(" + ").map(s => s.trim()).filter(Boolean)
+        : [];
+      activeDemoExercise.bisetParts = bisetParts;
+
+      const bisetBox = document.getElementById("demoBisetSwitcher");
+      if (bisetBox) {
+        if (bisetParts.length > 1) {
+          bisetBox.classList.remove("hidden");
+          bisetBox.innerHTML = bisetParts.map((part, i) => `
+            <button type="button" onclick="switchDemoBisetPart(${i})" class="${i === 0 ? "demo-biset-btn flex-1 px-2.5 py-1.5 rounded-lg bg-neonGreen text-bgMain font-bold text-[11px] truncate transition" : "demo-biset-btn flex-1 px-2.5 py-1.5 rounded-lg bg-bgMain text-slate-300 border border-borderSubtle font-semibold text-[11px] truncate hover:text-white transition"}">
+              Bi-Set ${i + 1}: ${part}
+            </button>
+          `).join("");
+        } else {
+          bisetBox.classList.add("hidden");
+          bisetBox.innerHTML = "";
+        }
+      }
+
+      document.getElementById("demoModalTitle").textContent = cleanName;
+      const initialTarget = bisetParts.length > 1 ? bisetParts[0] : cleanName;
+      applyDemoTargetExercise(initialTarget, muscleGroup, equipName);
 
       // Renderiza o Simulador Biomecânico SVG
       const svgBox = document.getElementById("demoSvgContainer");
       svgBox.style.setProperty("--bio-duration", currentBioSpeed);
-      svgBox.innerHTML = buildBiomechanicsSVG(patternKey, cleanName);
+      svgBox.innerHTML = buildBiomechanicsSVG(activeDemoExercise.patternKey, activeDemoExercise.name);
 
       // Configura links do YouTube (Oficial Verificado + Busca Direta)
       const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
         "como fazer " + cleanName + " execucao correta"
       )}`;
       document.getElementById("demoYoutubeSearchLink").href = searchUrl;
-      document.getElementById("demoYoutubeDirectLink").href = officialUrl || searchUrl;
+      document.getElementById("demoYoutubeDirectLink").href = activeDemoExercise.videoUrl || searchUrl;
 
       // Inicia na aba Animação Biomecânica 2D por padrão
       switchDemoView("biomechanics");
@@ -9347,6 +9695,12 @@
       const displayName = appState.userName || (linkedEmail ? linkedEmail.split("@")[0] : null);
       const currentPlan = getActivePlan();
 
+      const adminBtnEl = document.getElementById("btnAdminAudit");
+      if (adminBtnEl) {
+        const isAdm = String(linkedEmail || "").trim().toLowerCase() === "matheuslemos2003@yahoo.com.br";
+        adminBtnEl.classList.toggle("hidden", !isAdm);
+      }
+
       if (linkedEmail && appState.onboardingDone) {
         if (topBtnText) topBtnText.textContent = displayName;
         if (topBtnIcon) topBtnIcon.className = "ph-fill ph-cloud-check text-neonGreen text-sm";
@@ -9874,6 +10228,499 @@
         openOnboardingWizard(0);
       }
     };
+  
+    // =========================================================================
+    // PAINEL ADMIN DE AUDITORIA (EXCLUSIVO matheuslemos2003@yahoo.com.br)
+    // =========================================================================
+    const ADMIN_AUDIT_EMAIL = "matheuslemos2003@yahoo.com.br";
+    const ADMIN_AUDIT_STORAGE_KEY = "p60_admin_audit_flags_v1";
+    let adminAuditActiveVideoKey = null;
+    let adminAuditPage = 1;
+    const ADMIN_AUDIT_PAGE_SIZE = 16;
+
+    function changeAdminAuditPage(delta) {
+      adminAuditPage = Math.max(1, adminAuditPage + delta);
+      renderAdminAuditList(false);
+      const listEl = document.getElementById("adminAuditList");
+      if (listEl) listEl.scrollTop = 0;
+    }
+
+    function isAdminAuditUser() {
+      const em = String((appState && appState.cloudAccountEmail) || "").trim().toLowerCase();
+      return em === ADMIN_AUDIT_EMAIL;
+    }
+
+    function loadAdminAuditFlags() {
+      try {
+        const raw = localStorage.getItem(ADMIN_AUDIT_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveAdminAuditFlags(flags) {
+      try {
+        localStorage.setItem(ADMIN_AUDIT_STORAGE_KEY, JSON.stringify(flags));
+      } catch (e) {}
+    }
+
+    function getAdminAuditCatalog() {
+      const map = new Map();
+
+      // 1. EXERCISES_50
+      if (typeof EXERCISES_50 !== "undefined" && Array.isArray(EXERCISES_50)) {
+        EXERCISES_50.forEach(ex => {
+          if (!ex || !ex.name) return;
+          const clean = String(ex.name).trim();
+          if (!map.has(clean)) {
+            map.set(clean, { name: clean, muscle: ex.muscle || "Geral", equip: ex.equip || "Academia" });
+          }
+        });
+      }
+
+      // 2. WORKOUT_MODULES
+      if (typeof WORKOUT_MODULES !== "undefined" && WORKOUT_MODULES) {
+        Object.values(WORKOUT_MODULES).forEach(mod => {
+          if (!mod || !Array.isArray(mod.days)) return;
+          mod.days.forEach(day => {
+            if (!day || !Array.isArray(day.exercises)) return;
+            day.exercises.forEach(ex => {
+              if (!ex || !ex.name) return;
+              const clean = String(ex.name).replace(/^\d+\s*-\s*/, "").trim();
+              if (!map.has(clean)) {
+                map.set(clean, { name: clean, muscle: ex.muscle || "Geral", equip: ex.equip || "Academia" });
+              }
+            });
+          });
+        });
+      }
+
+      // 3. OFFICIAL_BALESTRIN_VIDEOS
+      if (typeof OFFICIAL_BALESTRIN_VIDEOS !== "undefined" && OFFICIAL_BALESTRIN_VIDEOS) {
+        Object.keys(OFFICIAL_BALESTRIN_VIDEOS).forEach(name => {
+          const clean = String(name).trim();
+          if (!map.has(clean)) {
+            map.set(clean, { name: clean, muscle: "Catálogo PDF", equip: "Academia" });
+          }
+        });
+      }
+
+      return Array.from(map.values()).map(item => {
+        const guide = getBiomechanicsProfile(item.name);
+        const vidRes = resolveOfficialVideoUrl(item.name);
+        const url = vidRes && vidRes.url ? vidRes.url : "";
+        const isPdf = url.includes("youtu.be/");
+        return {
+          ...item,
+          pattern: guide ? guide.pattern : "unknown",
+          patternTitle: guide ? guide.title : "Sem perfil",
+          videoUrl: url,
+          isPdf
+        };
+      }).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    }
+
+    function escapeAdminHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function openAdminAuditModal() {
+      if (!isAdminAuditUser()) {
+        showToast("Acesso restrito ao administrador.", "warning");
+        return;
+      }
+      const modal = document.getElementById("adminAuditModal");
+      if (!modal) return;
+
+      // Populate muscle filter once
+      const catalog = getAdminAuditCatalog();
+      const muscleSel = document.getElementById("adminAuditMuscleFilter");
+      if (muscleSel) {
+        const prevVal = muscleSel.value || "all";
+        const muscles = Array.from(new Set(catalog.map(c => c.muscle))).sort((a, b) => a.localeCompare(b, "pt-BR"));
+        muscleSel.innerHTML = `<option value="all">Grupo: Todos (${catalog.length})</option>` +
+          muscles.map(m => `<option value="${escapeAdminHtml(m)}">${escapeAdminHtml(m)}</option>`).join("");
+        muscleSel.value = muscles.includes(prevVal) ? prevVal : "all";
+      }
+
+      adminAuditActiveVideoKey = null;
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      renderAdminAuditList();
+    }
+
+    function closeAdminAuditModal() {
+      const modal = document.getElementById("adminAuditModal");
+      if (modal) modal.classList.add("hidden");
+      adminAuditActiveVideoKey = null;
+      const list = document.getElementById("adminAuditList");
+      if (list) list.innerHTML = "";
+      document.body.style.overflow = "";
+    }
+
+    function updateAdminAuditStats(catalog, flags) {
+      let flagged = 0, badVid = 0, badAnim = 0;
+      catalog.forEach(item => {
+        const f = flags[item.name];
+        if (f && (f.badVideo || f.badAnim)) {
+          flagged++;
+          if (f.badVideo) badVid++;
+          if (f.badAnim) badAnim++;
+        }
+      });
+      const elTot = document.getElementById("adminStatTotal");
+      const elFlg = document.getElementById("adminStatFlagged");
+      const elVid = document.getElementById("adminStatBadVid");
+      const elAnm = document.getElementById("adminStatBadAnim");
+      if (elTot) elTot.textContent = `Total: ${catalog.length}`;
+      if (elFlg) elFlg.textContent = `Marcados: ${flagged}`;
+      if (elVid) elVid.textContent = `Vídeos: ${badVid}`;
+      if (elAnm) elAnm.textContent = `Animações: ${badAnim}`;
+    }
+
+    function toggleAdminAuditFlag(exName, field, checked) {
+      const flags = loadAdminAuditFlags();
+      if (!flags[exName]) flags[exName] = { badVideo: false, badAnim: false, note: "" };
+      flags[exName][field] = !!checked;
+      if (!flags[exName].badVideo && !flags[exName].badAnim && !flags[exName].note) {
+        delete flags[exName];
+      }
+      saveAdminAuditFlags(flags);
+      const catalog = getAdminAuditCatalog();
+      updateAdminAuditStats(catalog, flags);
+
+      // Update card border styling without re-rendering entire list
+      const card = document.querySelector(`[data-admin-ex="${CSS.escape(exName)}"]`);
+      if (card) {
+        const isFlagged = flags[exName] && (flags[exName].badVideo || flags[exName].badAnim);
+        card.classList.toggle("border-red-500/70", !!isFlagged);
+        card.classList.toggle("bg-red-950/20", !!isFlagged);
+        card.classList.toggle("border-borderSubtle", !isFlagged);
+      }
+    }
+
+    function updateAdminAuditNote(exName, noteVal) {
+      const flags = loadAdminAuditFlags();
+      if (!flags[exName]) flags[exName] = { badVideo: false, badAnim: false, note: "" };
+      flags[exName].note = String(noteVal || "").trim();
+      if (!flags[exName].badVideo && !flags[exName].badAnim && !flags[exName].note) {
+        delete flags[exName];
+      }
+      saveAdminAuditFlags(flags);
+    }
+
+    function toggleAdminInlineVideo(exName) {
+      adminAuditActiveVideoKey = (adminAuditActiveVideoKey === exName) ? null : exName;
+      renderAdminAuditList();
+    }
+
+    function renderAdminAuditList(resetPage = false) {
+      if (resetPage) adminAuditPage = 1;
+      const container = document.getElementById("adminAuditList");
+      if (!container) return;
+
+      const catalog = getAdminAuditCatalog();
+      const flags = loadAdminAuditFlags();
+      updateAdminAuditStats(catalog, flags);
+
+      const q = normalizeStr(document.getElementById("adminAuditSearch")?.value || "");
+      const statusF = document.getElementById("adminAuditStatusFilter")?.value || "all";
+      const muscleF = document.getElementById("adminAuditMuscleFilter")?.value || "all";
+
+      const filtered = catalog.filter(item => {
+        const f = flags[item.name] || {};
+        const isFlagged = !!(f.badVideo || f.badAnim);
+        if (statusF === "flagged" && !isFlagged) return false;
+        if (statusF === "unflagged" && isFlagged) return false;
+        if (statusF === "bad_video" && !f.badVideo) return false;
+        if (statusF === "bad_anim" && !f.badAnim) return false;
+        if (statusF === "non_pdf" && item.isPdf) return false;
+        if (muscleF !== "all" && item.muscle !== muscleF) return false;
+        if (q) {
+          const hay = normalizeStr(`${item.name} ${item.muscle} ${item.pattern} ${item.patternTitle} ${item.videoUrl}`);
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-sm">Nenhum exercício encontrado para esse filtro.</div>`;
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / ADMIN_AUDIT_PAGE_SIZE));
+      if (adminAuditPage > totalPages) adminAuditPage = totalPages;
+      const startIdx = (adminAuditPage - 1) * ADMIN_AUDIT_PAGE_SIZE;
+      const pageItems = filtered.slice(startIdx, startIdx + ADMIN_AUDIT_PAGE_SIZE);
+
+      const pageInd = document.getElementById("adminPageIndicator");
+      const prevBtn = document.getElementById("adminPrevPageBtn");
+      const nextBtn = document.getElementById("adminNextPageBtn");
+      if (pageInd) pageInd.textContent = `Página ${adminAuditPage} de ${totalPages} (${filtered.length} exercícios)`;
+      if (prevBtn) prevBtn.disabled = adminAuditPage <= 1;
+      if (nextBtn) nextBtn.disabled = adminAuditPage >= totalPages;
+
+      container.innerHTML = pageItems.map((item, localIdx) => {
+        const idx = startIdx + localIdx;
+        const f = flags[item.name] || {};
+        const isFlagged = !!(f.badVideo || f.badAnim);
+        const safeNameAttr = escapeAdminHtml(item.name);
+        const safeNameJs = JSON.stringify(item.name).replace(/"/g, "&quot;");
+        const ytId = typeof extractYoutubeId === "function" ? extractYoutubeId(item.videoUrl) : "";
+        const isVideoOpen = adminAuditActiveVideoKey === item.name;
+        const svgHtml = buildBiomechanicsSVG(item.pattern, item.name);
+
+        return `
+          <div data-admin-ex="${safeNameAttr}" class="rounded-2xl bg-bgCard border ${isFlagged ? "border-red-500/70 bg-red-950/20" : "border-borderSubtle"} p-3 flex flex-col gap-2.5 transition">
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                  <span class="px-1.5 py-0.5 rounded bg-bgInput text-[10px] font-bold text-slate-400">#${idx + 1}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">${escapeAdminHtml(item.muscle)}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.isPdf ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" : "bg-amber-500/15 text-amber-300 border border-amber-500/30"}">${item.isPdf ? "PDF Oficial" : "YouTube Extra"}</span>
+                </div>
+                <h3 class="text-sm font-extrabold text-white leading-snug">${escapeAdminHtml(item.name)}</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Padrão 2D: <span class="text-neonCyan font-semibold">${escapeAdminHtml(item.pattern)}</span> • ${escapeAdminHtml(item.patternTitle)}</p>
+              </div>
+            </div>
+
+            <!-- Live 2D SVG Preview -->
+            <div class="w-full rounded-xl bg-bgMain border border-borderSubtle/80 p-2 flex items-center justify-center overflow-hidden">
+              <div class="w-full max-w-[260px]">${svgHtml}</div>
+            </div>
+
+            <!-- Video Controls -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              <button type="button" onclick="toggleAdminInlineVideo(${safeNameJs})" class="px-2.5 py-1.5 rounded-lg ${isVideoOpen ? "bg-red-500/20 text-red-300 border-red-500/40" : "bg-bgInput text-slate-200 border-borderSubtle hover:border-neonGreen/60"} border text-[11px] font-bold flex items-center gap-1 transition">
+                <i class="ph-fill ${isVideoOpen ? "ph-stop-circle" : "ph-play-circle"} text-sm ${isVideoOpen ? "text-red-400" : "text-neonGreen"}"></i>
+                <span>${isVideoOpen ? "Fechar Vídeo" : "Assistir Vídeo Aqui"}</span>
+              </button>
+              <a href="${escapeAdminHtml(item.videoUrl || "#")}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-bgInput border border-borderSubtle hover:border-blue-400/60 text-blue-300 text-[11px] font-bold flex items-center gap-1 transition truncate max-w-[200px]">
+                <i class="ph-bold ph-arrow-square-out text-xs shrink-0"></i>
+                <span class="truncate">${escapeAdminHtml(item.videoUrl ? item.videoUrl.replace("https://", "") : "Sem link")}</span>
+              </a>
+            </div>
+
+            ${isVideoOpen && ytId ? `
+              <div class="w-full aspect-video rounded-xl overflow-hidden border border-borderSubtle bg-black">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${escapeAdminHtml(ytId)}?rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            ` : (isVideoOpen ? `<div class="text-xs text-red-400 p-2 rounded-lg bg-red-500/10 border border-red-500/30">Link de vídeo inválido ou ausente.</div>` : "")}
+
+            <!-- Selection Checkboxes & Note -->
+            <div class="pt-2 border-t border-borderSubtle/70 flex flex-col gap-2">
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-1.5 text-xs font-bold text-orange-300 cursor-pointer select-none">
+                  <input type="checkbox" ${f.badVideo ? "checked" : ""} onchange="toggleAdminAuditFlag(${safeNameJs}, 'badVideo', this.checked)" class="w-4 h-4 rounded accent-orange-500" />
+                  <span>Vídeo incorreto</span>
+                </label>
+                <label class="flex items-center gap-1.5 text-xs font-bold text-purple-300 cursor-pointer select-none">
+                  <input type="checkbox" ${f.badAnim ? "checked" : ""} onchange="toggleAdminAuditFlag(${safeNameJs}, 'badAnim', this.checked)" class="w-4 h-4 rounded accent-purple-500" />
+                  <span>Animação 2D incorreta</span>
+                </label>
+              </div>
+              <input type="text" value="${escapeAdminHtml(f.note || "")}" onchange="updateAdminAuditNote(${safeNameJs}, this.value)" placeholder="Observação opcional (ex: link correto ou movimento esperado)..." class="w-full px-2.5 py-1.5 rounded-lg bg-bgInput border border-borderSubtle text-[11px] text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-400" />
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function buildAdminAuditReportTxt() {
+      const catalog = getAdminAuditCatalog();
+      const flags = loadAdminAuditFlags();
+      const flaggedItems = catalog.filter(item => {
+        const f = flags[item.name];
+        return f && (f.badVideo || f.badAnim);
+      });
+
+      const now = new Date();
+      const dateStr = now.toLocaleString("pt-BR");
+      const lines = [
+        "================================================================",
+        "AUDITORIA ADMIN - SISTEMA DE TREINO PROJETO 60 DIAS",
+        `Administrador: ${ADMIN_AUDIT_EMAIL}`,
+        `Data/Hora: ${dateStr}`,
+        `Total de exercícios no catálogo: ${catalog.length}`,
+        `Total marcados com problemas: ${flaggedItems.length}`,
+        "================================================================",
+        ""
+      ];
+
+      if (flaggedItems.length === 0) {
+        lines.push("Nenhum exercício foi marcado como incorreto.");
+      } else {
+        flaggedItems.forEach((item, idx) => {
+          const f = flags[item.name];
+          const issues = [];
+          if (f.badVideo) issues.push("VÍDEO INCORRETO");
+          if (f.badAnim) issues.push("ANIMAÇÃO 2D INCORRETA");
+          lines.push(`${idx + 1}. ${item.name}`);
+          lines.push(`   Grupo Muscular: ${item.muscle}`);
+          lines.push(`   Problemas: ${issues.join(" + ")}`);
+          lines.push(`   Padrão 2D Atual: ${item.pattern} (${item.patternTitle})`);
+          lines.push(`   Vídeo Atual: ${item.videoUrl || "Sem URL"}`);
+          if (f.note) {
+            lines.push(`   Observação: ${f.note}`);
+          }
+          lines.push("");
+        });
+      }
+      return { text: lines.join("\n"), count: flaggedItems.length };
+    }
+
+    function exportAdminAuditTxt() {
+      const { text, count } = buildAdminAuditReportTxt();
+      if (count === 0) {
+        showToast("Marque pelo menos 1 exercício incorreto antes de exportar.", "warning");
+        return;
+      }
+      const isoDate = new Date().toISOString().slice(0, 10);
+      const filename = `auditoria_exercicios_incorretos_${isoDate}.txt`;
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Arquivo ${filename} exportado com ${count} exercício(s)!`, "success");
+    }
+
+    function copyAdminAuditTxt() {
+      const { text, count } = buildAdminAuditReportTxt();
+      if (count === 0) {
+        showToast("Marque pelo menos 1 exercício incorreto antes de copiar.", "warning");
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`Lista com ${count} exercício(s) copiada!`, "success");
+        }).catch(() => {
+          showToast("Não foi possível copiar automaticamente. Use Exportar TXT.", "warning");
+        });
+      } else {
+        showToast("Use o botão Exportar TXT para baixar o relatório.", "warning");
+      }
+    }
+
+    let adminClearConfirmArmed = false;
+    let adminClearTimer = null;
+    function clearAdminAuditFlags() {
+      const btn = document.getElementById("btnClearAdminAudit");
+      if (!adminClearConfirmArmed) {
+        adminClearConfirmArmed = true;
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-warning text-sm text-red-400"></i><span>Confirmar?</span>';
+        clearTimeout(adminClearTimer);
+        adminClearTimer = setTimeout(() => {
+          adminClearConfirmArmed = false;
+          if (btn) btn.innerHTML = '<i class="ph-bold ph-trash text-sm"></i><span>Limpar</span>';
+        }, 4000);
+        return;
+      }
+      adminClearConfirmArmed = false;
+      clearTimeout(adminClearTimer);
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-trash text-sm"></i><span>Limpar</span>';
+      saveAdminAuditFlags({});
+      renderAdminAuditList();
+      showToast("Marcações de auditoria limpas.", "info");
+    }
+
   </script>
+
+  <!-- ====================================================================== -->
+  <!-- MODAL ADMIN: AUDITORIA DE EXERCÍCIOS (VÍDEOS & ANIMAÇÕES 2D)           -->
+  <!-- ====================================================================== -->
+  <div id="adminAuditModal" class="hidden fixed inset-0 z-[95] bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+    <div class="w-full max-w-6xl max-h-[94vh] bg-bgMain border border-amber-500/40 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+      <!-- Header -->
+      <div class="p-3.5 sm:p-4 border-b border-borderSubtle bg-bgCard flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <i class="ph-fill ph-shield-check text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+              Painel Admin • Auditoria de Exercícios
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">EXCLUSIVO</span>
+            </h2>
+            <p class="text-[11px] text-slate-400">Visualize animações 2D e vídeos lado a lado, marque os incorretos e exporte o relatório em .TXT.</p>
+          </div>
+        </div>
+        <button onclick="closeAdminAuditModal()" class="w-8 h-8 rounded-xl bg-bgInput border border-borderSubtle text-slate-300 hover:text-white flex items-center justify-center transition" title="Fechar Painel Admin">
+          <i class="ph-bold ph-x text-base"></i>
+        </button>
+      </div>
+
+      <!-- Toolbar: Stats + Filters + Export -->
+      <div class="p-3 sm:p-3.5 border-b border-borderSubtle bg-bgCard/60 flex flex-col gap-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <!-- Counters -->
+          <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
+            <span id="adminStatTotal" class="px-2.5 py-1 rounded-lg bg-bgInput border border-borderSubtle text-slate-200">Total: 0</span>
+            <span id="adminStatFlagged" class="px-2.5 py-1 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300">Marcados: 0</span>
+            <span id="adminStatBadVid" class="px-2.5 py-1 rounded-lg bg-orange-500/15 border border-orange-500/40 text-orange-300">Vídeos: 0</span>
+            <span id="adminStatBadAnim" class="px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/40 text-purple-300">Animações: 0</span>
+          </div>
+          <!-- Actions -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button onclick="exportAdminAuditTxt()" class="px-3 py-1.5 rounded-xl bg-neonGreen text-bgMain hover:brightness-110 text-xs font-extrabold flex items-center gap-1.5 transition shadow">
+              <i class="ph-bold ph-download-simple text-sm"></i>
+              <span>Exportar TXT Incorretos</span>
+            </button>
+            <button onclick="copyAdminAuditTxt()" class="px-2.5 py-1.5 rounded-xl bg-bgInput border border-borderSubtle hover:border-neonCyan/60 text-slate-200 text-xs font-bold flex items-center gap-1 transition">
+              <i class="ph-bold ph-copy text-sm text-neonCyan"></i>
+              <span>Copiar TXT</span>
+            </button>
+            <button id="btnClearAdminAudit" onclick="clearAdminAuditFlags()" class="px-2.5 py-1.5 rounded-xl bg-bgInput border border-borderSubtle hover:border-red-500/50 text-slate-300 hover:text-red-300 text-xs font-bold flex items-center gap-1 transition">
+              <i class="ph-bold ph-trash text-sm"></i>
+              <span>Limpar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="relative">
+            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input id="adminAuditSearch" type="text" oninput="renderAdminAuditList(true)" placeholder="Buscar exercício, padrão ou URL..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-bgInput border border-borderSubtle text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400" />
+          </div>
+          <select id="adminAuditStatusFilter" onchange="renderAdminAuditList(true)" class="px-3 py-1.5 rounded-xl bg-bgInput border border-borderSubtle text-xs text-slate-200 focus:outline-none focus:border-amber-400">
+            <option value="all">Filtro: Todos os exercícios</option>
+            <option value="flagged">Somente Marcados (Incorretos)</option>
+            <option value="unflagged">Somente Não Marcados</option>
+            <option value="bad_video">Somente Vídeo Incorreto</option>
+            <option value="bad_anim">Somente Animação 2D Incorreta</option>
+            <option value="non_pdf">Somente Vídeos Extras (Fora dos PDFs)</option>
+          </select>
+          <select id="adminAuditMuscleFilter" onchange="renderAdminAuditList(true)" class="px-3 py-1.5 rounded-xl bg-bgInput border border-borderSubtle text-xs text-slate-200 focus:outline-none focus:border-amber-400">
+            <option value="all">Grupo: Todos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Exercise Audit Grid -->
+      <div id="adminAuditList" class="flex-1 overflow-y-auto p-3 sm:p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Populado dinamicamente -->
+      </div>
+
+      <!-- Pagination Bar -->
+      <div id="adminAuditPagination" class="p-2.5 sm:p-3 border-t border-borderSubtle bg-bgCard flex items-center justify-between gap-2 text-xs">
+        <button type="button" onclick="changeAdminAuditPage(-1)" id="adminPrevPageBtn" class="px-3 py-1.5 rounded-xl bg-bgInput border border-borderSubtle text-slate-200 font-bold hover:border-amber-400 disabled:opacity-40 transition">◀ Anterior</button>
+        <span id="adminPageIndicator" class="text-slate-300 font-bold">Página 1 de 1</span>
+        <button type="button" onclick="changeAdminAuditPage(1)" id="adminNextPageBtn" class="px-3 py-1.5 rounded-xl bg-bgInput border border-borderSubtle text-slate-200 font-bold hover:border-amber-400 disabled:opacity-40 transition">Próxima ▶</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
