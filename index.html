@@ -229,12 +229,6 @@
             <i class="ph-fill ph-chart-bar text-blue-400 text-sm"></i>
             <span>Relatório</span>
           </button>
-
-          <!-- Botão Admin (exclusivo matheuslemos2003@yahoo.com.br) -->
-          <button id="btnAdminAudit" onclick="openAdminAuditModal()" title="Painel Admin — Auditar Vídeos e Animações 2D" class="hidden h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition">
-            <i class="ph-fill ph-shield-check text-amber-400 text-sm"></i>
-            <span>Admin</span>
-          </button>
         </div>
       </div>
 
@@ -1529,6 +1523,20 @@
               Trocar Usuário
             </button>
           </div>
+        </div>
+
+        <!-- Painel Admin (exclusivo matheuslemos2003@yahoo.com.br — apenas no Perfil) -->
+        <div id="btnAdminAudit" class="hidden bg-amber-500/10 border border-amber-500/40 rounded-2xl p-3 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <span class="text-[10px] font-bold uppercase text-amber-400 flex items-center gap-1">
+              <i class="ph-fill ph-shield-check text-sm"></i> Área do Administrador
+            </span>
+            <p class="text-[11px] text-slate-300 mt-0.5">Auditar GIFs, animações 2D e vídeos dos exercícios</p>
+          </div>
+          <button type="button" onclick="openAdminAuditModal()" class="shrink-0 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-bgMain font-extrabold text-xs flex items-center gap-1.5 transition shadow">
+            <i class="ph-bold ph-sliders-horizontal text-sm"></i>
+            <span>Abrir Admin</span>
+          </button>
         </div>
 
         <!-- Atualização Rápida de Medidas (Salva direto no Relatório e na Planilha) -->
@@ -10250,6 +10258,15 @@
       return em === ADMIN_AUDIT_EMAIL;
     }
 
+    function syncAdminAuditVisibility() {
+      const btn = document.getElementById("btnAdminAudit");
+      if (btn) btn.classList.toggle("hidden", !isAdminAuditUser());
+    }
+    window.addEventListener("load", () => {
+      syncAdminAuditVisibility();
+      setTimeout(syncAdminAuditVisibility, 600);
+    });
+
     function loadAdminAuditFlags() {
       try {
         const raw = localStorage.getItem(ADMIN_AUDIT_STORAGE_KEY);
@@ -10335,6 +10352,8 @@
         showToast("Acesso restrito ao administrador.", "warning");
         return;
       }
+      const cloudModal = document.getElementById("cloudAuthModal");
+      if (cloudModal) cloudModal.classList.add("hidden");
       const modal = document.getElementById("adminAuditModal");
       if (!modal) return;
 

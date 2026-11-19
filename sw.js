@@ -1,5 +1,5 @@
 // Service Worker - Sistema de Treino Projeto 60 Dias (PWA)
-const CACHE_NAME = "projeto-60d-pwa-v4";
+const CACHE_NAME = "projeto-60d-pwa-v6";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
